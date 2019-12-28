@@ -1,24 +1,5 @@
-# README
+# Scriber
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A dynamic To-do list manager with CRUD operations and a tagging system.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+This web application was created as a submission for the CVWO Winter Assignment 2019.
