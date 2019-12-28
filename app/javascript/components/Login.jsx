@@ -24,13 +24,13 @@ class Login extends React.Component {
   onSubmit = event => {
     event.preventDefault();
     
-    let params = {
+    let session = {
       email: this.state.email,
       password: this.state.password
     };
 
     axios
-      .post("/login", params)
+    .post("/login", {session}, {withCredentials: true})
       .then(response => {
         if (response.data.logged_in) {
           this.props.onLogin(response.data);

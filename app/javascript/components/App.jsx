@@ -14,6 +14,9 @@ class App extends React.Component {
       logged_in: false,
       user: {}
     }
+
+    this.onLogin = this.onLogin.bind(this);
+    this.onLogout = this.onLogout.bind(this);
   }
 
   onLogin = (data) => {
