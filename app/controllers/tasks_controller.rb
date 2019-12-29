@@ -13,6 +13,21 @@ class TasksController < ApplicationController
       }
     end
   end
+
+  def update
+    @task = current_user.tasks.find(params[:id])
+
+    if @task.update(task_params)
+      render json: {
+        task_updated: true,
+        tasks: current_user.tasks
+      }
+    else
+      render json: {
+        task_updated: false
+      }
+    end
+  end
   
   def destroy
     @task = current_user.tasks.find(params[:id])

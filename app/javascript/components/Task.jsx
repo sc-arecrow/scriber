@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import EditTaskForm from './EditTaskForm';
 
 class Task extends React.Component {
   constructor(props) {
@@ -7,10 +8,12 @@ class Task extends React.Component {
 
     this.state = {
       completed: false,
-      hovering: false
+      hovering: false,
+      show_edit: false
     }
 
     this.onCheck = this.onCheck.bind(this);
+    this.onChangeEdit = this.onChangeEdit.bind(this);
     this.onRemove = this.onRemove.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
@@ -21,6 +24,14 @@ class Task extends React.Component {
       this.setState({completed: false});
     } else {
       this.setState({completed: true});
+    }
+  }
+
+  onChangeEdit = () => {
+    if (this.state.show_edit) {
+      this.setState({show_edit: false});
+    } else {
+      this.setState({show_edit: true});
     }
   }
 
@@ -64,12 +75,26 @@ class Task extends React.Component {
               onClick={this.onCheck}></input>
             {this.props.task.title}
           </label>
-        </div>
-        <div>
+
+          <button
+            className='open-edit-button'
+            onClick={this.onChangeEdit}>  
+          </button>
+
           <button
             className='remove-button'
             onClick={this.onRemove}>  
           </button>
+        </div>
+
+        <div>
+          {this.state.show_edit 
+            ? <EditTaskForm 
+                user={this.props.user}
+                task={this.props.task}
+                onChangeEdit={this.onChangeEdit}
+                onChangeTasks={this.props.onChangeTasks}/> 
+            : null}
         </div>
       </li>
     )

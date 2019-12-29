@@ -44,7 +44,6 @@ class Dashboard extends React.Component {
 
   render () {
     let tasks = this.props.tasks;
-    console.log(tasks);
     let display_tasks = tasks.map(task => {
       return <Task
         key={task.id} 
