@@ -1,5 +1,6 @@
 import React from 'react';
 import { Router } from '@reach/router';
+
 import Welcome from './Welcome';
 import Login from './Login';
 import Signup from './Signup';
@@ -12,25 +13,33 @@ class App extends React.Component {
 
     this.state = {
       logged_in: false,
-      user: {}
+      user: {},
+      tasks: []
     }
 
     this.onLogin = this.onLogin.bind(this);
     this.onLogout = this.onLogout.bind(this);
+    this.onChangeTasks = this.onChangeTasks.bind(this);
   }
 
   onLogin = (data) => {
     this.setState({
       logged_in: true,
-      user: data.user
+      user: data.user,
+      tasks: data.tasks
     });
   }
 
   onLogout = () => {
     this.setState({
       logged_in: false,
-      user: {}
+      user: {},
+      tasks: []
     });
+  }
+
+  onChangeTasks = (tasks) => {
+    this.setState({tasks: tasks});
   }
 
   render () {
@@ -45,7 +54,9 @@ class App extends React.Component {
           onLogin={this.onLogin}/>
         <Dashboard 
           path='/dashboard'
-          user={this.state.user} />
+          user={this.state.user}
+          tasks={this.state.tasks}
+          onChangeTasks={this.onChangeTasks}/>
       </Router>
     )
   }

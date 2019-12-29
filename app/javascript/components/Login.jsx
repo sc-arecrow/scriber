@@ -30,7 +30,7 @@ class Login extends React.Component {
     };
 
     axios
-    .post("/login", {session}, {withCredentials: true})
+      .post("/login", {session}, {withCredentials: true})
       .then(response => {
         if (response.data.logged_in) {
           this.props.onLogin(response.data);
