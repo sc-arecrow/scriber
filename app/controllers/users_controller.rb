@@ -11,7 +11,8 @@ class UsersController < ApplicationController
       render json: {
         user_created: true,
         user: @user,
-        tasks: @user.tasks
+        tasks: @user.tasks,
+        tags: @user.tags
       }
     else
       render json: {

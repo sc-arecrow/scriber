@@ -12,7 +12,8 @@ class SessionsController < ApplicationController
       render json: {
         logged_in: true,
         user: @user,
-        tasks: @user.tasks
+        tasks: @user.tasks,
+        tags: @user.tags
       }
     else
       render json: {

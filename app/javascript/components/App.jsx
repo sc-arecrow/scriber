@@ -14,19 +14,22 @@ class App extends React.Component {
     this.state = {
       logged_in: false,
       user: {},
-      tasks: []
+      tasks: [],
+      tags: []
     }
 
     this.onLogin = this.onLogin.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.onChangeTasks = this.onChangeTasks.bind(this);
+    this.onChangeTags = this.onChangeTags.bind(this);
   }
 
   onLogin = (data) => {
     this.setState({
       logged_in: true,
       user: data.user,
-      tasks: data.tasks
+      tasks: data.tasks,
+      tags: data.tags
     });
   }
 
@@ -34,12 +37,17 @@ class App extends React.Component {
     this.setState({
       logged_in: false,
       user: {},
-      tasks: []
+      tasks: [],
+      tags: []
     });
   }
 
   onChangeTasks = (tasks) => {
     this.setState({tasks: tasks});
+  }
+
+  onChangeTags = (tags) => {
+    this.setState({tags: tags});
   }
 
   render () {
@@ -56,7 +64,9 @@ class App extends React.Component {
           path='/dashboard'
           user={this.state.user}
           tasks={this.state.tasks}
-          onChangeTasks={this.onChangeTasks}/>
+          tags={this.state.tags}
+          onChangeTasks={this.onChangeTasks}
+          onChangeTags={this.onChangeTags}/>
       </Router>
     )
   }
