@@ -32,6 +32,7 @@ class AddTagForm extends React.Component {
       .then(response => {
         if (response.data.tag_created) {
           this.props.onChangeTags(response.data.tags)
+          this.setState({new_tag_name: ""});
         } else {
           //todo error
         }
@@ -46,6 +47,7 @@ class AddTagForm extends React.Component {
             type="text"
             name="new_tag_name"
             value={this.state.new_tag_name}
+            placeholder="New tag"
             required
             onChange={this.onChange}
             >

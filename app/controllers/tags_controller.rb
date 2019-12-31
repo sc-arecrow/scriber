@@ -13,6 +13,15 @@ class TagsController < ApplicationController
       }
     end
   end
+  
+  def show
+    @tag = current_user.tags.find(params[:id])
+    @tasks = @tag.tasks
+
+    render json: {
+      tasks: @tasks
+    }
+  end
 
   def update
     @tag = current_user.tags.find(params[:id])

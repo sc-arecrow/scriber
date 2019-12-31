@@ -24,7 +24,7 @@ class App extends React.Component {
     this.onChangeTags = this.onChangeTags.bind(this);
   }
 
-  onLogin = (data) => {
+  onLogin = data => {
     this.setState({
       logged_in: true,
       user: data.user,
@@ -42,11 +42,11 @@ class App extends React.Component {
     });
   }
 
-  onChangeTasks = (tasks) => {
+  onChangeTasks = tasks => {
     this.setState({tasks: tasks});
   }
 
-  onChangeTags = (tags) => {
+  onChangeTags = tags => {
     this.setState({tags: tags});
   }
 

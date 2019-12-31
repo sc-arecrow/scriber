@@ -11,11 +11,19 @@ class Dashboard extends React.Component {
 
     this.state = {
       new_task_title: "",
-      show_tags: false
+      show_tags: false,
+      toggle_tag: false,
+      tag_toggled: {},
+      tasks_of_tag: []
     }
 
     this.onChange = this.onChange.bind(this);
     this.onAddTask = this.onAddTask.bind(this);
+    this.onShowTags = this.onShowTags.bind(this);
+    this.getTasksOf = this.getTasksOf.bind(this);
+    this.updateTasksOfTag = this.updateTasksOfTag.bind(this);
+    this.onToggleTag = this.onToggleTag.bind(this);
+    this.isTagged = this.isTagged.bind(this);
   }
 
   onChange = event => {
@@ -48,12 +56,52 @@ class Dashboard extends React.Component {
 
   onShowTags = () => {
     if (this.state.show_tags) {
-      this.setState({show_tags: false});
+      this.setState({
+        show_tags: false,
+        toggle_tag: false,
+        tag_toggled: {},
+        tasks_of_tag: []
+      });
     } else {
       this.setState({show_tags: true});
     }
   }
 
+  getTasksOf = tag => {
+    let url = '/users/' + this.props.user.id.toString() + '/tags/' + tag.id.toString();
+
+    axios
+      .get(url)
+      .then(response => {
+        this.setState({tasks_of_tag: response.data.tasks})
+      });
+  }
+
+  updateTasksOfTag = tasks => {
+    this.setState({tasks_of_tag: tasks});
+  }
+
+  onToggleTag = tag => {
+    if (tag === "close") {
+      this.setState({
+        toggle_tag: false,
+        tag_toggled: {},
+        tasks_of_tag: [],
+      });
+    } else {
+      this.setState({
+        toggle_tag: true,
+        tag_toggled: tag
+      });
+
+      this.getTasksOf(tag);
+    }
+  }
+
+  isTagged = task => {
+    const tasks = this.state.tasks_of_tag;
+    return tasks.find(t => t.id == task.id) !== undefined;
+  }
 
   render () {
     let tasks = this.props.tasks;
@@ -64,6 +112,11 @@ class Dashboard extends React.Component {
         key={task.id} 
         user={this.props.user}
         task={task}
+        toggle_tag={this.state.toggle_tag}
+        tag_toggled={this.state.tag_toggled}
+        tagged={this.isTagged(task)}
+        getTasksOf={this.getTasksOf}
+        updateTasksOfTag={this.updateTasksOfTag}
         onChangeTasks={this.props.onChangeTasks} />
     });
 
@@ -72,7 +125,9 @@ class Dashboard extends React.Component {
         key={tag.id}
         user={this.props.user}
         tag={tag}
-        onChangeTags={this.props.onChangeTags} />
+        tag_toggled={this.state.tag_toggled}
+        onChangeTags={this.props.onChangeTags}
+        onToggleTag={this.onToggleTag} />
     });
 
     return (

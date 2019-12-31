@@ -23,7 +23,9 @@ class EditTaskForm extends React.Component {
     event.preventDefault();
 
     let task = {
-      title: this.state.title
+      title: this.state.title,
+      tag_id: "editing title",
+      tagged: null
     }
 
     let url = '/users/' + this.props.user.id.toString() + '/tasks/' + this.props.task.id.toString();
@@ -36,6 +38,7 @@ class EditTaskForm extends React.Component {
           this.props.onChangeEdit();
         } else {
           //todo error
+          console.log("nope");
           this.props.onChangeEdit();
         }
       });

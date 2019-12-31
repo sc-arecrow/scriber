@@ -22,8 +22,10 @@ class Tag extends React.Component {
 
   onClick = () => {
     if (this.state.clicked) {
+      this.props.onToggleTag("close");
       this.setState({clicked: false});
     } else {
+      this.props.onToggleTag(this.props.tag);
       this.setState({clicked: true});
     }
   }
@@ -87,8 +89,8 @@ class Tag extends React.Component {
             ? <EditTagForm 
                 user={this.props.user}
                 tag={this.props.tag}
-                onChangeEdit={this.onChangeEdit}
-                onChangeTags={this.props.onChangeTags}/> 
+                onChangeTags={this.props.onChangeTags}
+                onChangeEdit={this.onChangeEdit}/> 
             : null}
         </div>
       </li>

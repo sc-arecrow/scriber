@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import EditTaskForm from './EditTaskForm';
+import TagTaskForm from "./TagTaskForm.1";
 
 class Task extends React.Component {
   constructor(props) {
@@ -93,6 +94,19 @@ class Task extends React.Component {
                 user={this.props.user}
                 task={this.props.task}
                 onChangeEdit={this.onChangeEdit}
+                onChangeTasks={this.props.onChangeTasks}/> 
+            : null}
+        </div>
+
+        <div>
+          {this.props.toggle_tag
+            ? <TagTaskForm 
+                user={this.props.user}
+                task={this.props.task}
+                tag={this.props.tag_toggled}
+                tagged={this.props.tagged}
+                getTasksOf={this.props.getTasksOf}
+                updateTasksOfTag={this.props.updateTasksOfTag}
                 onChangeTasks={this.props.onChangeTasks}/> 
             : null}
         </div>
