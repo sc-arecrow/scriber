@@ -1,5 +1,6 @@
 import React from "react";
 import axios from 'axios';
+import { Link } from '@reach/router';
 
 import Task from './Task';
 import Tag from './Tag';
@@ -161,6 +162,8 @@ class Dashboard extends React.Component {
     return (
       <div>
         <h1>Hello {this.props.user.email}!</h1>
+        <Link to='/account' className="btn btn-lg custom-button">Account</Link>
+        
         <SearchTaskForm onSearchTaskByTitle={this.onSearchTaskByTitle}/>
 
         <div>

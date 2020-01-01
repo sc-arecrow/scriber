@@ -22,6 +22,14 @@ class SessionsController < ApplicationController
     end
   end
 
+  def destroy
+    log_out
+
+    render json: {
+      logged_out: true
+    }
+  end
+
   def welcome
   end
 end

@@ -5,6 +5,7 @@ import Welcome from './Welcome';
 import Login from './Login';
 import Signup from './Signup';
 import Dashboard from './Dashboard';
+import AccountPage from './AccountPage';
 
 
 class App extends React.Component {
@@ -67,6 +68,10 @@ class App extends React.Component {
           tags={this.state.tags}
           onChangeTasks={this.onChangeTasks}
           onChangeTags={this.onChangeTags}/>
+        <AccountPage 
+          path='/account'
+          user={this.state.user}
+          onLogout={this.onLogout}/>
       </Router>
     )
   }
