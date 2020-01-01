@@ -10,7 +10,8 @@ class Tag extends React.Component {
     this.state = {
       clicked: false,
       hovering: false,
-      show_edit: false
+      show_edit: false,
+      filtered: false
     }
 
     this.onClick = this.onClick.bind(this);
@@ -18,6 +19,7 @@ class Tag extends React.Component {
     this.onRemove = this.onRemove.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.onFilter = this.onFilter.bind(this);
   }
 
   onClick = () => {
@@ -56,9 +58,26 @@ class Tag extends React.Component {
     this.setState({hovering: false});
   }
 
+  onFilter = () => {
+    if (this.state.filtered) {
+      this.setState({filtered: false});
+      this.props.onFilterTag(false);
+    } else {
+      this.setState({filtered: true});
+      this.props.onFilterTag(true);
+    }
+  }
+
   render () {
     let clicked = this.state.clicked;
     let hovering = this.state.hovering;
+
+    const filter_button = 
+      (<button
+        onClick={this.onFilter}
+        className="btn btn-lg custom-button">
+        {this.state.filtered ? "Unfilter" : "Filter"}
+      </button>);
 
     return (
       <li
@@ -91,6 +110,12 @@ class Tag extends React.Component {
                 tag={this.props.tag}
                 onChangeTags={this.props.onChangeTags}
                 onChangeEdit={this.onChangeEdit}/> 
+            : null}
+        </div>
+
+        <div>
+          {this.state.clicked
+            ? filter_button
             : null}
         </div>
       </li>

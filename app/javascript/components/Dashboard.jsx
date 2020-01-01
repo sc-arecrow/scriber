@@ -4,6 +4,7 @@ import axios from 'axios';
 import Task from './Task';
 import Tag from './Tag';
 import AddTagForm from './AddTagForm';
+import SearchTaskForm from './SearchTaskForm';
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -14,21 +15,36 @@ class Dashboard extends React.Component {
       show_tags: false,
       toggle_tag: false,
       tag_toggled: {},
-      tasks_of_tag: []
+      tasks_of_tag: [],
+      tasks_displayed: this.props.tasks
     }
 
     this.onChange = this.onChange.bind(this);
+    this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
     this.onAddTask = this.onAddTask.bind(this);
     this.onShowTags = this.onShowTags.bind(this);
     this.getTasksOf = this.getTasksOf.bind(this);
     this.updateTasksOfTag = this.updateTasksOfTag.bind(this);
     this.onToggleTag = this.onToggleTag.bind(this);
+    this.onFilterTag = this.onFilterTag.bind(this);
     this.isTagged = this.isTagged.bind(this);
   }
 
   onChange = event => {
     this.setState({
       [event.target.name]: event.target.value
+    });
+  }
+
+  onSearchTaskByTitle = title => {
+    const tasks = this.props.tasks;
+
+    const filtered_tasks = (title == "")
+      ? tasks
+      : tasks.filter(task => task.title.toLowerCase().includes(title));
+
+    this.setState({
+      tasks_displayed: filtered_tasks
     });
   }
 
@@ -98,16 +114,27 @@ class Dashboard extends React.Component {
     }
   }
 
+  onFilterTag = filtered => {
+    if (filtered) {
+      this.setState({
+        tasks_displayed: this.state.tasks_of_tag
+      });
+    } else {
+      this.setState({
+        tasks_displayed: this.props.tasks
+      });
+    }
+  }
+
   isTagged = task => {
     const tasks = this.state.tasks_of_tag;
     return tasks.find(t => t.id == task.id) !== undefined;
   }
 
   render () {
-    let tasks = this.props.tasks;
     let tags = this.props.tags;
 
-    let display_tasks = tasks.map(task => {
+    let display_tasks = this.state.tasks_displayed.map(task => {
       return <Task
         key={task.id} 
         user={this.props.user}
@@ -127,12 +154,15 @@ class Dashboard extends React.Component {
         tag={tag}
         tag_toggled={this.state.tag_toggled}
         onChangeTags={this.props.onChangeTags}
-        onToggleTag={this.onToggleTag} />
+        onToggleTag={this.onToggleTag}
+        onFilterTag={this.onFilterTag} />
     });
 
     return (
       <div>
         <h1>Hello {this.props.user.email}!</h1>
+        <SearchTaskForm onSearchTaskByTitle={this.onSearchTaskByTitle}/>
+
         <div>
           <form onSubmit={this.onAddTask}>
             <input 
