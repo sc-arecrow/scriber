@@ -53,6 +53,8 @@ class Signup extends React.Component {
               Sign Up
             </h1>
 
+            <hr className="my-4" />
+
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
                 <label htmlFor="email">Email</label>

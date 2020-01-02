@@ -9,7 +9,6 @@ class Tag extends React.Component {
 
     this.state = {
       clicked: false,
-      hovering: false,
       show_edit: false,
       filtered: false
     }
@@ -17,8 +16,6 @@ class Tag extends React.Component {
     this.onClick = this.onClick.bind(this);
     this.onChangeEdit = this.onChangeEdit.bind(this);
     this.onRemove = this.onRemove.bind(this);
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
     this.onFilter = this.onFilter.bind(this);
   }
 
@@ -50,57 +47,60 @@ class Tag extends React.Component {
       });
   }
 
-  onMouseEnter = () => {
-    this.setState({hovering: true});
-  }
-
-  onMouseLeave = () => {
-    this.setState({hovering: false});
-  }
-
   onFilter = () => {
     if (this.state.filtered) {
       this.setState({filtered: false});
-      this.props.onFilterTag(false);
+      this.props.onFilterTag(false, null);
     } else {
       this.setState({filtered: true});
-      this.props.onFilterTag(true);
+      this.props.onFilterTag(true, this.props.tag);
     }
   }
 
   render () {
-    let clicked = this.state.clicked;
-    let hovering = this.state.hovering;
-
-    const filter_button = 
-      (<button
-        onClick={this.onFilter}
-        className="btn btn-lg custom-button">
-        {this.state.filtered ? "Unfilter" : "Filter"}
-      </button>);
-
     return (
       <li
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
+        className={(this.state.filtered || this.state.clicked)
+          ? "list-group-item list-group-item-action list-group-item-dark"
+          : "list-group-item list-group-item-action"}
         >
         
-        <div>
-          <label 
-            className={clicked ? 'task-container completed' : 'task-container'}
-            onClick={this.onClick}>
-            {this.props.tag.name}
-          </label>
+        <div className="d-flex justify-content-between">
+          <div>
+            <button
+              type="button"
+              className='btn btn-sm custom-button mr-2'
+              onClick={this.onClick}>
+              <span className="fas fa-tag"></span>
+            </button>
 
-          <button
-            className='open-edit-button'
-            onClick={this.onChangeEdit}>  
-          </button>
+            <label>
+              {this.props.tag.name}
+            </label>
+          </div>
 
-          <button
-            className='remove-button'
-            onClick={this.onRemove}>  
-          </button>
+          <div>
+            <button
+              type="button"
+              className='btn btn-sm custom-button mr-2'
+              onClick={this.onFilter}>
+              <span className="fas fa-filter"></span>
+            </button>
+
+            <button
+              type="button"
+              className='btn btn-sm custom-button mr-2'
+              onClick={this.onChangeEdit}>
+              <span className="far fa-edit"></span>
+            </button>
+
+            <button
+              type="button"
+              className='btn btn-sm custom-button'
+              onClick={this.onRemove}>
+              <span className="fas fa-trash-alt"></span>
+            </button>
+          </div>
         </div>
 
         <div>
@@ -110,12 +110,6 @@ class Tag extends React.Component {
                 tag={this.props.tag}
                 onChangeTags={this.props.onChangeTags}
                 onChangeEdit={this.onChangeEdit}/> 
-            : null}
-        </div>
-
-        <div>
-          {this.state.clicked
-            ? filter_button
             : null}
         </div>
       </li>

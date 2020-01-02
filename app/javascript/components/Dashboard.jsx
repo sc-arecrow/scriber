@@ -4,6 +4,7 @@ import { Link } from '@reach/router';
 
 import Task from './Task';
 import Tag from './Tag';
+import AddTaskForm from './AddTaskForm';
 import AddTagForm from './AddTagForm';
 import SearchTaskForm from './SearchTaskForm';
 
@@ -12,7 +13,6 @@ class Dashboard extends React.Component {
     super(props);
 
     this.state = {
-      new_task_title: "",
       show_tags: false,
       toggle_tag: false,
       tag_toggled: {},
@@ -20,21 +20,15 @@ class Dashboard extends React.Component {
       tasks_displayed: this.props.tasks
     }
 
-    this.onChange = this.onChange.bind(this);
     this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
-    this.onAddTask = this.onAddTask.bind(this);
+    this.onUpdateTasks = this.onUpdateTasks.bind(this);
     this.onShowTags = this.onShowTags.bind(this);
     this.getTasksOf = this.getTasksOf.bind(this);
+    this.displayTasksOf = this.displayTasksOf.bind(this);
     this.updateTasksOfTag = this.updateTasksOfTag.bind(this);
     this.onToggleTag = this.onToggleTag.bind(this);
     this.onFilterTag = this.onFilterTag.bind(this);
     this.isTagged = this.isTagged.bind(this);
-  }
-
-  onChange = event => {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
   }
 
   onSearchTaskByTitle = title => {
@@ -49,26 +43,10 @@ class Dashboard extends React.Component {
     });
   }
 
-  onAddTask = event => {
-    event.preventDefault();
-
-    let task = {
-      title: this.state.new_task_title
-    }
-
-    let url = '/users/' + this.props.user.id.toString() + '/tasks';
-
-    axios
-      .post(url, {task}, {withCredentials: true})
-      .then(response => {
-        if (response.data.task_created) {
-          this.props.onChangeTasks(response.data.tasks);
-          this.setState({new_task_title: ""});
-        } else {
-          //todo error
-          this.setState({new_task_title: ""});
-        }
-      });
+  onUpdateTasks = tasks => {
+    this.setState({
+      tasks_displayed: tasks
+    });
   }
 
   onShowTags = () => {
@@ -94,6 +72,16 @@ class Dashboard extends React.Component {
       });
   }
 
+  displayTasksOf = tag => {
+    let url = '/users/' + this.props.user.id.toString() + '/tags/' + tag.id.toString();
+
+    axios
+      .get(url)
+      .then(response => {
+        this.setState({tasks_displayed: response.data.tasks})
+      });
+  }
+
   updateTasksOfTag = tasks => {
     this.setState({tasks_of_tag: tasks});
   }
@@ -115,11 +103,9 @@ class Dashboard extends React.Component {
     }
   }
 
-  onFilterTag = filtered => {
+  onFilterTag = (filtered, tag) => {
     if (filtered) {
-      this.setState({
-        tasks_displayed: this.state.tasks_of_tag
-      });
+      this.displayTasksOf(tag);
     } else {
       this.setState({
         tasks_displayed: this.props.tasks
@@ -145,7 +131,8 @@ class Dashboard extends React.Component {
         tagged={this.isTagged(task)}
         getTasksOf={this.getTasksOf}
         updateTasksOfTag={this.updateTasksOfTag}
-        onChangeTasks={this.props.onChangeTasks} />
+        onChangeTasks={this.props.onChangeTasks}
+        onUpdateTasks={this.onUpdateTasks} />
     });
 
     let display_tags = tags.map(tag => {
@@ -161,50 +148,75 @@ class Dashboard extends React.Component {
 
     return (
       <div>
-        <h1>Hello {this.props.user.email}!</h1>
-        <Link to='/account' className="btn btn-lg custom-button">Account</Link>
+        <nav className="navbar sticky-top navbar-expand-md navbar-dark bg-dark mb-3">
+          <div className="container-fluid">
+            <a className="navbar-brand mr-3">Scriber</a>
+
+            <div className="collapse navbar-collapse" id="navbarCollapse">
+              <div className="navbar-nav">
+                <Link to='/dashboard' className="nav-item nav-link active">Home</Link>
+                <Link to='/account' className="nav-item nav-link">Account</Link>
+              </div>
+
+              <div className="navbar-nav ml-auto">
+                <button type="button" className="btn custom-button" onClick={this.props.onLogout}>Logout</button>
+              </div>
+            </div>
+          </div>
+        </nav>
         
-        <SearchTaskForm onSearchTaskByTitle={this.onSearchTaskByTitle}/>
+        <div className="container-fluid">
+          <div className="row mt-4">
+            <div className="col-md-2" />
+            <div className="col-md-5">
+              <div className="row align-items-center justify-content-left">
+                <SearchTaskForm onSearchTaskByTitle={this.onSearchTaskByTitle}/>
+              </div>
 
-        <div>
-          <form onSubmit={this.onAddTask}>
-            <input 
-              type="text"
-              name="new_task_title"
-              value={this.state.new_task_title}
-              placeholder="New todo" 
-              required
-              onChange={this.onChange}></input>
-            <button type="submit" className="btn btn-lg custom-button">Add</button>
-          </form>
-        </div>
-      
-        <div className="list-wrapper">
-          <ul>
-            {display_tasks}
-          </ul>
-        </div>
+              <hr className="my-4" />
+            </div>
+            <div className="col-md-5" />
+          </div>
 
-        <button
-            className='show-tags-button'
-            onClick={this.onShowTags}>
-          {this.state.show_tags ? "Close Tags" : "Open Tags"}
-        </button>
+          <div className="row">
+            <div className="col-md-2" />
+            <div className="col-md-5">
+              <div className="row align-items-center justify-content-left">
+                <AddTaskForm 
+                  user={this.props.user} 
+                  onChangeTasks={this.props.onChangeTasks}
+                  onUpdateTasks={this.onUpdateTasks}/>
+              </div>
 
-        <div>
-          {this.state.show_tags 
-            ? <AddTagForm 
-                user={this.props.user}
-                onChangeTags={this.props.onChangeTags}/> 
-            : null}
-        </div>
+              <hr className="my-4" />
+            </div>
+            <div className="col-md-3">
+              <div className="row align-items-center justify-content-left">
+                <AddTagForm 
+                  user={this.props.user}
+                  onChangeTags={this.props.onChangeTags}/> 
+              </div>
 
-        <div className="list-wrapper">
-          <ul>
-            {this.state.show_tags 
-              ? display_tags 
-              : null}
-          </ul>
+              <hr className="my-4" />
+            </div>
+            <div className="col-md-2" />
+          </div>
+
+          <div className="row">
+            <div className="col-md-2" />
+            <div className="col-md-5">
+              <ul className="list-group">
+                {display_tasks}
+              </ul>
+            </div>
+
+            <div className="col-md-3">
+              <ul className="list-group">
+                {display_tags}
+              </ul>
+            </div>
+            <div className="col-md-2" />
+          </div>
         </div>
       </div>
     )

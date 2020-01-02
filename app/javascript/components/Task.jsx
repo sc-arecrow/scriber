@@ -21,6 +21,7 @@ class Task extends React.Component {
   }
 
   onCheck = () => {
+    console.log("checked");
     if (this.state.completed) {
       this.setState({completed: false});
     } else {
@@ -43,6 +44,7 @@ class Task extends React.Component {
       .delete(url, {withCredentials: true})
       .then(response => {
         this.props.onChangeTasks(response.data.tasks);
+        this.props.onUpdateTasks(response.data.tasks);
       });
   }
 
@@ -58,34 +60,65 @@ class Task extends React.Component {
     let completed = this.state.completed;
     let hovering = this.state.hovering;
 
+    const checkbox = 
+      (
+        <input 
+          type='button'
+          className={completed
+            ? 'custom-checkbox align-middle checked' 
+            : hovering
+              ? 'custom-checkbox align-middle hovering'
+              : 'custom-checkbox align-middle'}
+          onClick={this.onCheck}>
+        </input>
+      );
+
     return (
       <li
+        className={completed
+          ? "list-group-item list-group-item-action list-group-item-dark"
+          : "list-group-item list-group-item-action"}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
         >
         
-        <div>
-          <label className={completed ? 'task-container completed' : 'task-container'}>
-            <input 
-              type='button'
-              className={completed
-                ? 'custom-checkbox checked' 
-                : hovering
-                  ? 'custom-checkbox hovering'
-                  : 'custom-checkbox'}
-              onClick={this.onCheck}></input>
-            {this.props.task.title}
-          </label>
+        <div className="d-flex justify-content-between">
+          <div>
+            {this.props.toggle_tag
+              ? null
+              : checkbox}
 
-          <button
-            className='open-edit-button'
-            onClick={this.onChangeEdit}>  
-          </button>
+            <label className={completed ? 'completed ml-3' : "ml-3"}>
+              {this.props.task.title}
+            </label>
+          </div>
 
-          <button
-            className='remove-button'
-            onClick={this.onRemove}>  
-          </button>
+          <div>
+            {this.props.toggle_tag
+              ? <TagTaskForm 
+                  hovering={this.state.hovering}
+                  user={this.props.user}
+                  task={this.props.task}
+                  tag={this.props.tag_toggled}
+                  tagged={this.props.tagged}
+                  getTasksOf={this.props.getTasksOf}
+                  updateTasksOfTag={this.props.updateTasksOfTag}/> 
+              : null}
+            
+            <button
+              type="button"
+              className='btn btn-sm custom-button mr-2'
+              onClick={this.onChangeEdit}>
+              <span className="far fa-edit"></span>
+            </button>
+
+            <button
+              type="button"
+              className='btn btn-sm custom-button'
+              onClick={this.onRemove}>
+              <span className="fas fa-trash-alt"></span>
+            </button>
+          </div>
         </div>
 
         <div>
@@ -94,20 +127,8 @@ class Task extends React.Component {
                 user={this.props.user}
                 task={this.props.task}
                 onChangeEdit={this.onChangeEdit}
-                onChangeTasks={this.props.onChangeTasks}/> 
-            : null}
-        </div>
-
-        <div>
-          {this.props.toggle_tag
-            ? <TagTaskForm 
-                user={this.props.user}
-                task={this.props.task}
-                tag={this.props.tag_toggled}
-                tagged={this.props.tagged}
-                getTasksOf={this.props.getTasksOf}
-                updateTasksOfTag={this.props.updateTasksOfTag}
-                onChangeTasks={this.props.onChangeTasks}/> 
+                onChangeTasks={this.props.onChangeTasks}
+                onUpdateTasks={this.props.onUpdateTasks}/> 
             : null}
         </div>
       </li>

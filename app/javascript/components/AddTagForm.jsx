@@ -42,22 +42,27 @@ class AddTagForm extends React.Component {
   render () {
     return (
       <div>
-        <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            name="new_tag_name"
-            value={this.state.new_tag_name}
-            placeholder="New tag"
-            required
-            onChange={this.onChange}
-            >
-          </input>
-          
-          <button
-            type="submit"
-            className="btn btn-lg custom-button">
-            Add
-          </button>
+        <form className="form-inline" onSubmit={this.onSubmit}>
+          <div className="input-group col-auto">
+            <input
+              type="text"
+              id="new_tag_name"
+              name="new_tag_name"
+              className="form-control"
+              onChange={this.onChange}
+              required
+              value={this.state.new_tag_name}
+              placeholder="New tag">
+            </input>
+          </div>
+
+          <div className="input-group col-auto">
+            <button
+              type="submit"
+              className="btn custom-button">
+              Add
+            </button>
+          </div>
         </form>
       </div>
     )

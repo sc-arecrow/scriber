@@ -1,5 +1,6 @@
 import React from 'react';
-import { Router } from '@reach/router';
+import { Router, navigate } from '@reach/router';
+import axios from 'axios';
 
 import Welcome from './Welcome';
 import Login from './Login';
@@ -35,12 +36,23 @@ class App extends React.Component {
   }
 
   onLogout = () => {
-    this.setState({
-      logged_in: false,
-      user: {},
-      tasks: [],
-      tags: []
-    });
+    axios
+      .delete('/logout', {withCredentials: true})
+      .then(response => {
+        if (response.data.logged_out) {
+          this.setState({
+            logged_in: false,
+            user: {},
+            tasks: [],
+            tags: []
+          });
+
+          navigate('/');
+        } else {
+          // todo error
+          navigate('/dashboard');
+        }
+      });
   }
 
   onChangeTasks = tasks => {
@@ -67,7 +79,8 @@ class App extends React.Component {
           tasks={this.state.tasks}
           tags={this.state.tags}
           onChangeTasks={this.onChangeTasks}
-          onChangeTags={this.onChangeTags}/>
+          onChangeTags={this.onChangeTags}
+          onLogout={this.onLogout}/>
         <AccountPage 
           path='/account'
           user={this.state.user}

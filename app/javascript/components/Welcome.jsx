@@ -8,7 +8,7 @@ class Welcome extends React.Component {
         <div className="jumbotron jumbotron-fluid bg-transparent">
           <div className="container secondary-color">
 
-            <h1 className="display-4">SCriber</h1>
+            <h1 className="display-4">Scriber</h1>
 
             <p className="lead">
               Organise your life.

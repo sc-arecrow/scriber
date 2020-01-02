@@ -35,6 +35,7 @@ class EditTaskForm extends React.Component {
       .then(response => {
         if (response.data.task_updated) {
           this.props.onChangeTasks(response.data.tasks);
+          this.props.onUpdateTasks(response.data.tasks);
           this.props.onChangeEdit();
         } else {
           //todo error
@@ -46,21 +47,26 @@ class EditTaskForm extends React.Component {
 
   render () {
     return (
-      <div>
-        <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            name="title"
-            value={this.state.title}
-            required
-            onChange={this.onChange}
-            >
-          </input>
-          <button
-            type="submit"
-            className="btn btn-lg custom-button">
-            Edit
-          </button>
+      <div className="ml-4">
+        <form className="form-inline" onSubmit={this.onSubmit}>
+          <div className="input-group col-auto">
+            <input
+              type="text"
+              name="title"
+              className="form-control"
+              value={this.state.title}
+              required
+              onChange={this.onChange}>
+            </input>
+          </div>
+
+          <div className="input-group col-auto">
+            <button
+              type="submit"
+              className="btn custom-button">
+              Edit
+            </button>
+          </div>
         </form>
       </div>
     )

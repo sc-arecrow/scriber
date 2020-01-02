@@ -51,6 +51,8 @@ class Login extends React.Component {
               Login
             </h1>
 
+            <hr className="my-4" />
+
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
                 <label htmlFor="email">Email</label>

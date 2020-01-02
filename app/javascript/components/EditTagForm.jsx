@@ -45,21 +45,26 @@ class EditTagForm extends React.Component {
 
   render () {
     return (
-      <div>
-        <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            name="name"
-            value={this.state.name}
-            required
-            onChange={this.onChange}
-            >
-          </input>
-          <button
-            type="submit"
-            className="btn btn-lg custom-button">
-            Edit
-          </button>
+      <div className="ml-4">
+        <form className="form-inline" onSubmit={this.onSubmit}>
+          <div className="input-group col-8">
+            <input
+              type="text"
+              name="name"
+              className="form-control"
+              value={this.state.name}
+              required
+              onChange={this.onChange}>
+            </input>
+          </div>
+
+          <div className="input-group col-auto">
+            <button
+              type="submit"
+              className="btn custom-button">
+              Edit
+            </button>
+          </div>
         </form>
       </div>
     )

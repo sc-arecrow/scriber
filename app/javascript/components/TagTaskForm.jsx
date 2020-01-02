@@ -5,12 +5,10 @@ class TagTaskForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onSubmit = this.onSubmit.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
 
-  onSubmit = event => {
-    event.preventDefault();
-
+  onClick = () => {
     let task = {
       title: null,
       tag_id: this.props.tag.id,
@@ -27,16 +25,20 @@ class TagTaskForm extends React.Component {
   }
 
   render () {
+    const tag_icon = (<span className="fas fa-tag"></span>);
     return (
-      <div>
-        <form onSubmit={this.onSubmit}>
-          <button
-            type="submit"
-            className="btn btn-lg custom-button">
-            {this.props.tagged ? "Untag" : "Tag"}
-          </button>
-        </form>
-      </div>
+      <button
+        type="button"
+        onClick={this.onClick}
+        className={this.props.tagged
+          ? 'btn btn-sm custom-button mr-2'
+          : this.props.hovering
+            ? 'custom-checkbox align-middle hovering mr-2'
+            : 'custom-checkbox align-middle mr-2'}>
+        {this.props.tagged
+          ? tag_icon
+          : null}
+      </button>
     )
   }
 }

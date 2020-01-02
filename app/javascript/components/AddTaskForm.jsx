@@ -1,16 +1,16 @@
 import React from 'react';
+import axios from 'axios';
 
-class SearchTaskForm extends React.Component {
+class AddTaskForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      search_title: ""
+      new_task_title: ""
     }
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onClear = this.onClear.bind(this);
   }
 
   onChange = event => {
@@ -22,12 +22,24 @@ class SearchTaskForm extends React.Component {
   onSubmit = event => {
     event.preventDefault();
 
-    this.props.onSearchTaskByTitle(this.state.search_title.toLowerCase());
-  }
+    let task = {
+      title: this.state.new_task_title
+    }
 
-  onClear = () => {
-    this.setState({search_title: ""});
-    this.props.onSearchTaskByTitle("");
+    let url = '/users/' + this.props.user.id.toString() + '/tasks';
+
+    axios
+      .post(url, {task}, {withCredentials: true})
+      .then(response => {
+        if (response.data.task_created) {
+          this.props.onChangeTasks(response.data.tasks);
+          this.props.onUpdateTasks(response.data.tasks);
+          this.setState({new_task_title: ""});
+        } else {
+          //todo error
+          this.setState({new_task_title: ""});
+        }
+      });
   }
 
   render () {
@@ -37,27 +49,21 @@ class SearchTaskForm extends React.Component {
           <div className="input-group col-auto">
             <input
               type="text"
-              id="search_title"
-              name="search_title"
+              id="new_task_title"
+              name="new_task_title"
               className="form-control"
               onChange={this.onChange}
-              value={this.state.search_title}
-              placeholder="Search todo">
+              required
+              value={this.state.new_task_title}
+              placeholder="New todo">
             </input>
           </div>
 
           <div className="input-group col-auto">
             <button
               type="submit"
-              className="btn custom-button mr-4">
-              Search
-            </button>
-
-            <button
-              type="reset"
-              onClick={this.onClear}
               className="btn custom-button">
-              Show All
+              Add
             </button>
           </div>
         </form>
@@ -66,4 +72,4 @@ class SearchTaskForm extends React.Component {
   }
 }
 
-export default SearchTaskForm;
+export default AddTaskForm;
