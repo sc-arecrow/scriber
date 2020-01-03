@@ -91,6 +91,16 @@ class Task extends React.Component {
         </input>
       );
 
+    const edit_button =
+      (
+        <button
+          type="button"
+          className='btn btn-sm custom-button mr-2'
+          onClick={this.onChangeEdit}>
+          <span className="far fa-edit"></span>
+        </button>
+      );
+
     return (
       <li
         className={checked
@@ -112,7 +122,7 @@ class Task extends React.Component {
           </div>
 
           <div>
-            {this.props.toggle_tag
+            {(!this.state.checked && this.props.toggle_tag)
               ? <TagTaskForm 
                   hovering={this.state.hovering}
                   user={this.props.user}
@@ -123,12 +133,7 @@ class Task extends React.Component {
                   updateTasksOfTag={this.props.updateTasksOfTag}/> 
               : null}
             
-            <button
-              type="button"
-              className='btn btn-sm custom-button mr-2'
-              onClick={this.onChangeEdit}>
-              <span className="far fa-edit"></span>
-            </button>
+            {this.state.checked ? null : edit_button}
 
             <button
               type="button"

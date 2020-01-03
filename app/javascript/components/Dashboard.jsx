@@ -17,11 +17,13 @@ class Dashboard extends React.Component {
       toggle_tag: false,
       tag_toggled: {},
       tasks_of_tag: [],
-      tasks_displayed: this.props.tasks
+      checked_tasks: this.props.tasks.filter(task => task.checked == "true"),
+      unchecked_tasks: this.props.tasks.filter(task => task.checked == "false")
     }
 
     this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
     this.onUpdateTasks = this.onUpdateTasks.bind(this);
+    this.onDeleteBelow = this.onDeleteBelow.bind(this);
     this.onShowTags = this.onShowTags.bind(this);
     this.getTasksOf = this.getTasksOf.bind(this);
     this.displayTasksOf = this.displayTasksOf.bind(this);
@@ -34,19 +36,43 @@ class Dashboard extends React.Component {
   onSearchTaskByTitle = title => {
     const tasks = this.props.tasks;
 
-    const filtered_tasks = (title == "")
-      ? tasks
-      : tasks.filter(task => task.title.toLowerCase().includes(title));
+    if (title == "") {
+      this.setState({
+        checked_tasks: tasks.filter(task => task.checked == "true"),
+        unchecked_tasks: tasks.filter(task => task.checked == "false")
+      });
+    } else {
+      const filtered_tasks = tasks.filter(task => task.title.toLowerCase().includes(title));
 
-    this.setState({
-      tasks_displayed: filtered_tasks
-    });
+      this.setState({
+        checked_tasks: filtered_tasks.filter(task => task.checked == "true"),
+        unchecked_tasks: filtered_tasks.filter(task => task.checked == "false")
+      });
+    }
   }
 
   onUpdateTasks = tasks => {
     this.setState({
-      tasks_displayed: tasks
+      checked_tasks: tasks.filter(task => task.checked == "true"),
+      unchecked_tasks: tasks.filter(task => task.checked == "false")
     });
+  }
+
+  onDeleteBelow = () => {
+    const checked_tasks = this.state.checked_tasks;
+
+    for (let i = 0; i < checked_tasks.length; i++) {
+      const task = checked_tasks[i];
+
+      const url = '/users/' + this.props.user.id.toString() + '/tasks/' + task.id.toString();
+
+      axios
+        .delete(url, {withCredentials: true})
+        .then(response => {
+          this.props.onChangeTasks(response.data.tasks);
+          this.onUpdateTasks(response.data.tasks);
+        });
+    }
   }
 
   onShowTags = () => {
@@ -78,7 +104,12 @@ class Dashboard extends React.Component {
     axios
       .get(url)
       .then(response => {
-        this.setState({tasks_displayed: response.data.tasks})
+        const tasks_of_tag = response.data.tasks;
+
+        this.setState({
+          checked_tasks: tasks_of_tag.filter(task => task.checked == "true"),
+          unchecked_tasks: tasks_of_tag.filter(task => task.checked == "false")
+        });
       });
   }
 
@@ -108,7 +139,8 @@ class Dashboard extends React.Component {
       this.displayTasksOf(tag);
     } else {
       this.setState({
-        tasks_displayed: this.props.tasks
+        checked_tasks: this.props.tasks.filter(task => task.checked == "true"),
+        unchecked_tasks: this.props.tasks.filter(task => task.checked == "false")
       });
     }
   }
@@ -121,7 +153,21 @@ class Dashboard extends React.Component {
   render () {
     let tags = this.props.tags;
 
-    let display_tasks = this.state.tasks_displayed.map(task => {
+    let checked_tasks = this.state.checked_tasks.map(task => {
+      return <Task
+        key={task.id} 
+        user={this.props.user}
+        task={task}
+        toggle_tag={this.state.toggle_tag}
+        tag_toggled={this.state.tag_toggled}
+        tagged={this.isTagged(task)}
+        getTasksOf={this.getTasksOf}
+        updateTasksOfTag={this.updateTasksOfTag}
+        onChangeTasks={this.props.onChangeTasks}
+        onUpdateTasks={this.onUpdateTasks} />
+    });
+
+    let unchecked_tasks = this.state.unchecked_tasks.map(task => {
       return <Task
         key={task.id} 
         user={this.props.user}
@@ -145,6 +191,13 @@ class Dashboard extends React.Component {
         onToggleTag={this.onToggleTag}
         onFilterTag={this.onFilterTag} />
     });
+
+    const delete_below_button = 
+      (
+        <button type="button" className="btn custom-button my-4 " onClick={this.onDeleteBelow}>
+          Delete Todos Below
+        </button>
+      );
 
     return (
       <div>
@@ -206,7 +259,15 @@ class Dashboard extends React.Component {
             <div className="col-md-2" />
             <div className="col-md-5">
               <ul className="list-group">
-                {display_tasks}
+                {unchecked_tasks}
+              </ul>
+              
+              <div className="row d-flex justify-content-center">
+                {this.state.checked_tasks.length == 0 ? null : delete_below_button}
+              </div>
+
+              <ul className="list-group">
+                {checked_tasks}
               </ul>
             </div>
 
