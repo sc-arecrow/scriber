@@ -54,6 +54,10 @@
   text-decoration-color: #343a40
 }
 
+.navbar-dark .navbar-brand {
+  color: #FFF !important;
+}
+
 .custom-checkbox {
   height: 25px;
   width: 25px;
