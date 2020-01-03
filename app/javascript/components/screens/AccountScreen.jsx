@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { Link, navigate } from '@reach/router';
 
-class AccountPage extends React.Component {
+class AccountScreen extends React.Component {
   constructor(props) {
     super(props);
 
@@ -195,4 +195,4 @@ class AccountPage extends React.Component {
   }
 }
 
-export default AccountPage;
+export default AccountScreen;

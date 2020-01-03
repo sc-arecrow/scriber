@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-import EditTagForm from './EditTagForm';
+import EditTagForm from '../forms/EditTagForm';
 
 class Tag extends React.Component {
   constructor(props) {

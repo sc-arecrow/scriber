@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from '@reach/router';
 
-class Welcome extends React.Component {
+class WelcomeScreen extends React.Component {
   render () {
     return (
       <div className="vw-100 vh-100 primary-color d-flex align-items-center justify-content-center">
@@ -32,4 +32,4 @@ class Welcome extends React.Component {
   }
 }
 
-export default Welcome;
+export default WelcomeScreen;

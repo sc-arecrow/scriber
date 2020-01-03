@@ -2,18 +2,18 @@ import React from "react";
 import axios from 'axios';
 import { Link } from '@reach/router';
 
-import Task from './Task';
-import Tag from './Tag';
-import AddTaskForm from './AddTaskForm';
-import AddTagForm from './AddTagForm';
-import SearchTaskForm from './SearchTaskForm';
+import Task from '../resources/Task';
+import Tag from '../resources/Tag';
 
-class Dashboard extends React.Component {
+import AddTaskForm from '../forms/AddTaskForm';
+import AddTagForm from '../forms/AddTagForm';
+import SearchTaskForm from '../forms/SearchTaskForm';
+
+class DashboardScreen extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      show_tags: false,
       toggle_tag: false,
       tag_toggled: {},
       tasks_of_tag: [],
@@ -24,7 +24,6 @@ class Dashboard extends React.Component {
     this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
     this.onUpdateTasks = this.onUpdateTasks.bind(this);
     this.onDeleteBelow = this.onDeleteBelow.bind(this);
-    this.onShowTags = this.onShowTags.bind(this);
     this.getTasksOf = this.getTasksOf.bind(this);
     this.displayTasksOf = this.displayTasksOf.bind(this);
     this.updateTasksOfTag = this.updateTasksOfTag.bind(this);
@@ -72,19 +71,6 @@ class Dashboard extends React.Component {
           this.props.onChangeTasks(response.data.tasks);
           this.onUpdateTasks(response.data.tasks);
         });
-    }
-  }
-
-  onShowTags = () => {
-    if (this.state.show_tags) {
-      this.setState({
-        show_tags: false,
-        toggle_tag: false,
-        tag_toggled: {},
-        tasks_of_tag: []
-      });
-    } else {
-      this.setState({show_tags: true});
     }
   }
 
@@ -284,4 +270,4 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default DashboardScreen;

@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import EditTaskForm from './EditTaskForm';
-import TagTaskForm from "./TagTaskForm";
+
+import EditTaskForm from '../forms/EditTaskForm';
+import TagTaskForm from "../forms/TagTaskForm";
 
 class Task extends React.Component {
   constructor(props) {

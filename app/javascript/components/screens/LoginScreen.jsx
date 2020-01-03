@@ -1,17 +1,16 @@
 import React from "react";
-import axios from 'axios';
-import { Link, navigate } from '@reach/router'
+import axios from "axios";
+import { Link, navigate } from "@reach/router";
 
-class Signup extends React.Component {
+class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       email: "",
-      password: "",
-      password_confirmation: ""
+      password: ""
     };
-
+    
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
@@ -24,21 +23,20 @@ class Signup extends React.Component {
 
   onSubmit = event => {
     event.preventDefault();
-
-    let user = {
+    
+    let session = {
       email: this.state.email,
-      password: this.state.password,
-      password_confirmation: this.state.password_confirmation
+      password: this.state.password
     };
 
     axios
-      .post("/users", {user}, {withCredentials: true})
+      .post("/login", {session}, {withCredentials: true})
       .then(response => {
-        if (response.data.user_created) {
-          this.props.onLogin(response.data)
+        if (response.data.logged_in) {
+          this.props.onLogin(response.data);
           navigate('/dashboard');
         } else {
-          navigate('/signup');
+          navigate('/login');
         }
       });
   }
@@ -50,7 +48,7 @@ class Signup extends React.Component {
           <div className="col-sm-12 col-lg-6 offset-lg-3">
 
             <h1 className="font-weight-normal mb-5">
-              Sign Up
+              Login
             </h1>
 
             <hr className="my-4" />
@@ -80,23 +78,11 @@ class Signup extends React.Component {
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="password_confirmation">Comfirm Password</label>
-                <input
-                  type="password"
-                  name="password_confirmation"
-                  value={this.state.password_confirmation}
-                  className="form-control"
-                  required
-                  onChange={this.onChange}
-                />
-              </div>
-
-              <input
+              <button
                 type="submit"
-                className="btn btn-lg custom-button"
-                value="Sign Up"
-              />
+                className="btn btn-lg custom-button">
+                Login
+              </button>
             </form>
 
             <p>
@@ -110,4 +96,4 @@ class Signup extends React.Component {
   }
 }
 
-export default Signup;
+export default LoginScreen;

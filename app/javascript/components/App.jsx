@@ -2,12 +2,11 @@ import React from 'react';
 import { Router, navigate } from '@reach/router';
 import axios from 'axios';
 
-import Welcome from './Welcome';
-import Login from './Login';
-import Signup from './Signup';
-import Dashboard from './Dashboard';
-import AccountPage from './AccountPage';
-
+import WelcomeScreen from './screens/WelcomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import SignupScreen from './screens/SignupScreen';
+import DashboardScreen from './screens/DashboardScreen';
+import AccountScreen from './screens/AccountScreen';
 
 class App extends React.Component {
   constructor(props) {
@@ -50,7 +49,7 @@ class App extends React.Component {
           navigate('/');
         } else {
           // todo error
-          navigate('/dashboard');
+          navigate('/dashboardScreen');
         }
       });
   }
@@ -66,14 +65,14 @@ class App extends React.Component {
   render () {
     return (
       <Router>
-        <Welcome path='/' />
-        <Login 
+        <WelcomeScreen path='/' />
+        <LoginScreen 
           path='/login' 
           onLogin={this.onLogin}/>
-        <Signup 
+        <SignupScreen 
           path='/signup'
           onLogin={this.onLogin}/>
-        <Dashboard 
+        <DashboardScreen 
           path='/dashboard'
           user={this.state.user}
           tasks={this.state.tasks}
@@ -81,7 +80,7 @@ class App extends React.Component {
           onChangeTasks={this.onChangeTasks}
           onChangeTags={this.onChangeTags}
           onLogout={this.onLogout}/>
-        <AccountPage 
+        <AccountScreen 
           path='/account'
           user={this.state.user}
           onLogout={this.onLogout}/>
