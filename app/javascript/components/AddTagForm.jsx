@@ -6,8 +6,7 @@ class AddTagForm extends React.Component {
     super(props);
 
     this.state = {
-      new_tag_name: "",
-      new_tag_colour: "#293241"
+      new_tag_name: ""
     }
   }
 
@@ -21,8 +20,7 @@ class AddTagForm extends React.Component {
     event.preventDefault();
 
     let tag = {
-      name: this.state.new_tag_name,
-      colour: this.state.new_tag_colour
+      name: this.state.new_tag_name
     }
 
     let url = '/users/' + this.props.user.id.toString() + '/tags';

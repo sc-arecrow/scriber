@@ -6,8 +6,7 @@ class EditTagForm extends React.Component {
     super(props);
 
     this.state = {
-      name: this.props.tag.name,
-      colour: this.props.tag.colour
+      name: this.props.tag.name
     }
 
     this.onChange = this.onChange.bind(this);
@@ -24,8 +23,7 @@ class EditTagForm extends React.Component {
     event.preventDefault();
 
     let tag = {
-      name: this.state.name,
-      colour: this.state.colour
+      name: this.state.name
     }
 
     let url = '/users/' + this.props.user.id.toString() + '/tags/' + this.props.tag.id.toString();

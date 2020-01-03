@@ -23,7 +23,8 @@ class AddTaskForm extends React.Component {
     event.preventDefault();
 
     let task = {
-      title: this.state.new_task_title
+      title: this.state.new_task_title,
+      checked: "false"
     }
 
     let url = '/users/' + this.props.user.id.toString() + '/tasks';

@@ -24,6 +24,7 @@ class EditTaskForm extends React.Component {
 
     let task = {
       title: this.state.title,
+      checked: "false",
       tag_id: "editing title",
       tagged: null
     }

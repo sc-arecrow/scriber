@@ -1,7 +1,6 @@
 class TasksController < ApplicationController
   def create
     @task = current_user.tasks.new(task_params)
-
     if @task.save
       render json: {
         task_created: true,
@@ -17,7 +16,7 @@ class TasksController < ApplicationController
   def update
     @task = current_user.tasks.find(params[:id])
 
-    if task_params[:tag_id] == "editing title"
+    if (task_params[:tag_id] == "editing title") || (task_params[:tag_id] == "checking task")
       if @task.update(task_params.except(:tag_id, :tagged))
         render json: {
           task_updated: true,
@@ -54,6 +53,6 @@ class TasksController < ApplicationController
   
   private
     def task_params
-      params.require(:task).permit(:title, :tag_id, :tagged)
+      params.require(:task).permit(:title, :checked, :tag_id, :tagged)
     end
 end

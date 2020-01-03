@@ -11,6 +11,7 @@ class TagTaskForm extends React.Component {
   onClick = () => {
     let task = {
       title: null,
+      checked: "false",
       tag_id: this.props.tag.id,
       tagged: this.props.tagged
     }

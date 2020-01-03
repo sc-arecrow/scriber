@@ -74,7 +74,7 @@ class Tag extends React.Component {
               <span className="fas fa-tag"></span>
             </button>
 
-            <label>
+            <label className="ml-2">
               {this.props.tag.name}
             </label>
           </div>
