@@ -16,13 +16,21 @@ class App extends React.Component {
       logged_in: false,
       user: {},
       tasks: [],
-      tags: []
+      tags: [],
+      displayed_tasks: []
     }
 
     this.onLogin = this.onLogin.bind(this);
     this.onLogout = this.onLogout.bind(this);
+    this.loginStatus = this.loginStatus.bind(this);
     this.onChangeTasks = this.onChangeTasks.bind(this);
     this.onChangeTags = this.onChangeTags.bind(this);
+
+    this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
+    this.onUpdateTasks = this.onUpdateTasks.bind(this);
+    this.onDeleteBelow = this.onDeleteBelow.bind(this);
+    this.displayTasksOf = this.displayTasksOf.bind(this);
+    this.onFilterTag = this.onFilterTag.bind(this);
   }
 
   onLogin = data => {
@@ -30,7 +38,8 @@ class App extends React.Component {
       logged_in: true,
       user: data.user,
       tasks: data.tasks,
-      tags: data.tags
+      tags: data.tags,
+      displayed_tasks: data.tasks
     });
   }
 
@@ -43,15 +52,32 @@ class App extends React.Component {
             logged_in: false,
             user: {},
             tasks: [],
-            tags: []
+            tags: [],
+            displayed_tasks: []
           });
 
           navigate('/');
         } else {
           // todo error
-          navigate('/dashboardScreen');
+          navigate('/dashboard');
         }
       });
+  }
+
+  loginStatus = () => {
+    axios
+      .get('/loggedin', {withCredentials: true})
+      .then(response => {
+        if (response.data.logged_in) {
+          this.onLogin(response.data);
+        } else {
+          this.onLogout();
+        }
+      })
+  }
+
+  componentDidMount () {
+    this.loginStatus();
   }
 
   onChangeTasks = tasks => {
@@ -60,6 +86,61 @@ class App extends React.Component {
 
   onChangeTags = tags => {
     this.setState({tags: tags});
+  }
+  
+  onUpdateTasks = tasks => {
+    this.setState({
+      displayed_tasks: tasks
+    });
+  }
+
+  onSearchTaskByTitle = title => {
+    const tasks = this.state.tasks;
+
+    if (title == "") {
+      this.onUpdateTasks(tasks);
+    } else {
+      const filtered_tasks = tasks.filter(task => task.title.toLowerCase().includes(title));
+
+      this.onUpdateTasks(filtered_tasks);
+    }
+  }
+
+  onDeleteBelow = () => {
+    const checked_tasks = this.state.displayed_tasks.filter(task => task.checked == "true");
+
+    for (let i = 0; i < checked_tasks.length; i++) {
+      const task = checked_tasks[i];
+
+      const url = '/users/' + this.state.user.id.toString() + '/tasks/' + task.id.toString();
+
+      axios
+        .delete(url, {withCredentials: true})
+        .then(response => {
+          this.onChangeTasks(response.data.tasks);
+          this.onUpdateTasks(response.data.tasks);
+        });
+    }
+  }
+
+  displayTasksOf = tag => {
+    let url = '/users/' + this.state.user.id.toString() + '/tags/' + tag.id.toString();
+
+    axios
+      .get(url)
+      .then(response => {
+        const tasks_of_tag = response.data.tasks;
+
+        this.onUpdateTasks(tasks_of_tag);
+      });
+  }
+
+  onFilterTag = (filtered, tag) => {
+    if (filtered) {
+      this.displayTasksOf(tag);
+    } else {
+      this.onUpdateTasks(this.state.tasks);
+    }
   }
 
   render () {
@@ -77,9 +158,15 @@ class App extends React.Component {
           user={this.state.user}
           tasks={this.state.tasks}
           tags={this.state.tags}
+          displayed_tasks={this.state.displayed_tasks}
           onChangeTasks={this.onChangeTasks}
           onChangeTags={this.onChangeTags}
-          onLogout={this.onLogout}/>
+          onLogout={this.onLogout}
+          onSearchTaskByTitle={this.onSearchTaskByTitle}
+          onUpdateTasks={this.onUpdateTasks}
+          onDeleteBelow={this.onDeleteBelow}
+          displayTasksOf={this.displayTasksOf}
+          onFilterTag={this.onFilterTag}/>
         <AccountScreen 
           path='/account'
           user={this.state.user}

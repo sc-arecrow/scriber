@@ -6,10 +6,12 @@ Rails.application.routes.draw do
     resources :tags
   end
 
-  get "login", to: "sessions#new"
+  get "loggedin", to: "sessions#loggedin"
   post "login", to: "sessions#create"
   delete "logout", to: "sessions#destroy"
   get "welcome", to: "sessions#welcome"
+
+  get "*path", to: "sessions#welcome"
 
   root "sessions#welcome"
 end

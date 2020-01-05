@@ -1,7 +1,4 @@
-class SessionsController < ApplicationController
-  def new
-  end
-  
+class SessionsController < ApplicationController  
   def create
     session_params = params.require(:session).permit(:email, :password)
     @user = User.find_by(email: session_params[:email])
@@ -28,6 +25,21 @@ class SessionsController < ApplicationController
     render json: {
       logged_out: true
     }
+  end
+
+  def loggedin
+    if logged_in? && current_user
+      render json: {
+        logged_in: true,
+        user: current_user,
+        tasks: current_user.tasks,
+        tags: current_user.tags
+      }
+    else
+      render json: {
+        logged_in: false
+      }
+    end
   end
 
   def welcome

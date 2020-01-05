@@ -16,62 +16,13 @@ class DashboardScreen extends React.Component {
     this.state = {
       toggle_tag: false,
       tag_toggled: {},
-      tasks_of_tag: [],
-      checked_tasks: this.props.tasks.filter(task => task.checked == "true"),
-      unchecked_tasks: this.props.tasks.filter(task => task.checked == "false")
+      tasks_of_tag: []
     }
 
-    this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
-    this.onUpdateTasks = this.onUpdateTasks.bind(this);
-    this.onDeleteBelow = this.onDeleteBelow.bind(this);
     this.getTasksOf = this.getTasksOf.bind(this);
-    this.displayTasksOf = this.displayTasksOf.bind(this);
     this.updateTasksOfTag = this.updateTasksOfTag.bind(this);
     this.onToggleTag = this.onToggleTag.bind(this);
-    this.onFilterTag = this.onFilterTag.bind(this);
     this.isTagged = this.isTagged.bind(this);
-  }
-
-  onSearchTaskByTitle = title => {
-    const tasks = this.props.tasks;
-
-    if (title == "") {
-      this.setState({
-        checked_tasks: tasks.filter(task => task.checked == "true"),
-        unchecked_tasks: tasks.filter(task => task.checked == "false")
-      });
-    } else {
-      const filtered_tasks = tasks.filter(task => task.title.toLowerCase().includes(title));
-
-      this.setState({
-        checked_tasks: filtered_tasks.filter(task => task.checked == "true"),
-        unchecked_tasks: filtered_tasks.filter(task => task.checked == "false")
-      });
-    }
-  }
-
-  onUpdateTasks = tasks => {
-    this.setState({
-      checked_tasks: tasks.filter(task => task.checked == "true"),
-      unchecked_tasks: tasks.filter(task => task.checked == "false")
-    });
-  }
-
-  onDeleteBelow = () => {
-    const checked_tasks = this.state.checked_tasks;
-
-    for (let i = 0; i < checked_tasks.length; i++) {
-      const task = checked_tasks[i];
-
-      const url = '/users/' + this.props.user.id.toString() + '/tasks/' + task.id.toString();
-
-      axios
-        .delete(url, {withCredentials: true})
-        .then(response => {
-          this.props.onChangeTasks(response.data.tasks);
-          this.onUpdateTasks(response.data.tasks);
-        });
-    }
   }
 
   getTasksOf = tag => {
@@ -81,21 +32,6 @@ class DashboardScreen extends React.Component {
       .get(url)
       .then(response => {
         this.setState({tasks_of_tag: response.data.tasks})
-      });
-  }
-
-  displayTasksOf = tag => {
-    let url = '/users/' + this.props.user.id.toString() + '/tags/' + tag.id.toString();
-
-    axios
-      .get(url)
-      .then(response => {
-        const tasks_of_tag = response.data.tasks;
-
-        this.setState({
-          checked_tasks: tasks_of_tag.filter(task => task.checked == "true"),
-          unchecked_tasks: tasks_of_tag.filter(task => task.checked == "false")
-        });
       });
   }
 
@@ -120,17 +56,6 @@ class DashboardScreen extends React.Component {
     }
   }
 
-  onFilterTag = (filtered, tag) => {
-    if (filtered) {
-      this.displayTasksOf(tag);
-    } else {
-      this.setState({
-        checked_tasks: this.props.tasks.filter(task => task.checked == "true"),
-        unchecked_tasks: this.props.tasks.filter(task => task.checked == "false")
-      });
-    }
-  }
-
   isTagged = task => {
     const tasks = this.state.tasks_of_tag;
     return tasks.find(t => t.id == task.id) !== undefined;
@@ -138,34 +63,41 @@ class DashboardScreen extends React.Component {
 
   render () {
     let tags = this.props.tags;
+    let displayed_tasks = this.props.displayed_tasks;
 
-    let checked_tasks = this.state.checked_tasks.map(task => {
-      return <Task
-        key={task.id} 
-        user={this.props.user}
-        task={task}
-        toggle_tag={this.state.toggle_tag}
-        tag_toggled={this.state.tag_toggled}
-        tagged={this.isTagged(task)}
-        getTasksOf={this.getTasksOf}
-        updateTasksOfTag={this.updateTasksOfTag}
-        onChangeTasks={this.props.onChangeTasks}
-        onUpdateTasks={this.onUpdateTasks} />
-    });
+    let checked_tasks = displayed_tasks
+      .filter(task => task.checked == "true")
+      .map(task => {
+        return <Task
+          key={task.id} 
+          user={this.props.user}
+          task={task}
+          tags={tags}
+          toggle_tag={this.state.toggle_tag}
+          tag_toggled={this.state.tag_toggled}
+          tagged={this.isTagged(task)}
+          getTasksOf={this.getTasksOf}
+          updateTasksOfTag={this.updateTasksOfTag}
+          onChangeTasks={this.props.onChangeTasks}
+          onUpdateTasks={this.props.onUpdateTasks} />
+      });
 
-    let unchecked_tasks = this.state.unchecked_tasks.map(task => {
-      return <Task
-        key={task.id} 
-        user={this.props.user}
-        task={task}
-        toggle_tag={this.state.toggle_tag}
-        tag_toggled={this.state.tag_toggled}
-        tagged={this.isTagged(task)}
-        getTasksOf={this.getTasksOf}
-        updateTasksOfTag={this.updateTasksOfTag}
-        onChangeTasks={this.props.onChangeTasks}
-        onUpdateTasks={this.onUpdateTasks} />
-    });
+    let unchecked_tasks = displayed_tasks
+      .filter(task => task.checked == "false")
+      .map(task => {
+        return <Task
+          key={task.id} 
+          user={this.props.user}
+          task={task}
+          tags={tags}
+          toggle_tag={this.state.toggle_tag}
+          tag_toggled={this.state.tag_toggled}
+          tagged={this.isTagged(task)}
+          getTasksOf={this.getTasksOf}
+          updateTasksOfTag={this.updateTasksOfTag}
+          onChangeTasks={this.props.onChangeTasks}
+          onUpdateTasks={this.props.onUpdateTasks} />
+      });
 
     let display_tags = tags.map(tag => {
       return <Tag
@@ -175,12 +107,12 @@ class DashboardScreen extends React.Component {
         tag_toggled={this.state.tag_toggled}
         onChangeTags={this.props.onChangeTags}
         onToggleTag={this.onToggleTag}
-        onFilterTag={this.onFilterTag} />
+        onFilterTag={this.props.onFilterTag} />
     });
 
     const delete_below_button = 
       (
-        <button type="button" className="btn custom-button my-4 " onClick={this.onDeleteBelow}>
+        <button type="button" className="btn custom-button my-4 " onClick={this.props.onDeleteBelow}>
           Delete Todos Below
         </button>
       );
@@ -209,7 +141,7 @@ class DashboardScreen extends React.Component {
             <div className="col-md-2" />
             <div className="col-md-5">
               <div className="row align-items-center justify-content-left">
-                <SearchTaskForm onSearchTaskByTitle={this.onSearchTaskByTitle}/>
+                <SearchTaskForm onSearchTaskByTitle={this.props.onSearchTaskByTitle}/>
               </div>
 
               <hr className="my-4" />
@@ -223,8 +155,9 @@ class DashboardScreen extends React.Component {
               <div className="row align-items-center justify-content-left">
                 <AddTaskForm 
                   user={this.props.user} 
+                  tags={tags}
                   onChangeTasks={this.props.onChangeTasks}
-                  onUpdateTasks={this.onUpdateTasks}/>
+                  onUpdateTasks={this.props.onUpdateTasks}/>
               </div>
 
               <hr className="my-4" />
@@ -249,7 +182,7 @@ class DashboardScreen extends React.Component {
               </ul>
               
               <div className="row d-flex justify-content-center">
-                {this.state.checked_tasks.length == 0 ? null : delete_below_button}
+                {displayed_tasks.filter(task => task.checked == "true").length == 0 ? null : delete_below_button}
               </div>
 
               <ul className="list-group">

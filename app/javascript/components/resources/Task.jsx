@@ -81,7 +81,7 @@ class Task extends React.Component {
 
     const checkbox = 
       (
-        <input 
+        <button 
           type='button'
           className={checked
             ? 'custom-checkbox align-middle checked' 
@@ -89,7 +89,7 @@ class Task extends React.Component {
               ? 'custom-checkbox align-middle hovering'
               : 'custom-checkbox align-middle'}
           onClick={this.onCheck}>
-        </input>
+        </button>
       );
 
     const edit_button =
@@ -113,7 +113,7 @@ class Task extends React.Component {
         
         <div className="d-flex justify-content-between">
           <div>
-            {this.props.toggle_tag
+            {this.props.toggle_tag || this.state.show_edit
               ? null
               : checkbox}
 

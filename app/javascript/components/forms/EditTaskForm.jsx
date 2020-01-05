@@ -48,7 +48,7 @@ class EditTaskForm extends React.Component {
 
   render () {
     return (
-      <div className="ml-4">
+      <div>
         <form className="form-inline" onSubmit={this.onSubmit}>
           <div className="input-group col-auto">
             <input
