@@ -12,9 +12,15 @@ class SessionsController < ApplicationController
         tasks: @user.tasks,
         tags: @user.tags
       }
+    elsif @user.nil?
+      render json: {
+        logged_in: false,
+        error: "user does not exist"
+      }
     else
       render json: {
-        logged_in: false
+        logged_in: false,
+        error: "incorrect password"
       }
     end
   end

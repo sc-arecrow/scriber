@@ -130,6 +130,7 @@ class DashboardScreen extends React.Component {
               </div>
 
               <div className="navbar-nav ml-auto">
+                <a className="nav-item nav-link active">{this.props.user.email}</a>
                 <button type="button" className="btn custom-button" onClick={this.props.onLogout}>Logout</button>
               </div>
             </div>

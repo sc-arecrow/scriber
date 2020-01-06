@@ -16,7 +16,8 @@ class UsersController < ApplicationController
       }
     else
       render json: {
-        user_created: false
+        user_created: false,
+        errors: @user.errors
       }
     end
   end
@@ -38,7 +39,8 @@ class UsersController < ApplicationController
       else
         render json: {
           correct_old_password: true,
-          password_updated: false
+          password_updated: false,
+          errors: current_user.errors
         }
       end
     else

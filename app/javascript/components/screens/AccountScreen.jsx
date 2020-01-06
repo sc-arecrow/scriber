@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { Link, navigate } from '@reach/router';
 
+import Alert from '../resources/Alert'
+
 class AccountScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -10,13 +12,17 @@ class AccountScreen extends React.Component {
       show_password_form: false,
       old_password: "",
       new_password: "",
-      new_password_confirmation: ""
+      new_password_confirmation: "",
+      alert_displayed: false,
+      alert_message: {}
     }
 
     this.onChange = this.onChange.bind(this);
     this.onShowPasswordForm = this.onShowPasswordForm.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onDeleteAccount = this.onDeleteAccount.bind(this);
+    this.onAlert = this.onAlert.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   onChange = event => {
@@ -47,18 +53,66 @@ class AccountScreen extends React.Component {
     axios
       .patch(url, {user}, {withCredentials: true})
       .then(response => {
+        let message;
+
         if (response.data.correct_old_password) {
           if (response.data.password_updated) {
-            console.log("password updated")
-            navigate('/dashboard')
+            message = {
+              type: "success",
+              text: "Password changed!",
+              posttext: ""
+            }
+
+            this.setState({
+              old_password: "",
+              new_password: "",
+              new_password_confirmation: ""
+            });
           } else {
-            console.log("password update failed")
-            //todo alert
+            const errors = response.data.errors;
+          
+            if (errors.password != undefined) {
+              if (errors.password.includes("is too short (minimum is 8 characters)")) {
+                message = {
+                  type: "error",
+                  text: "Password is too short.",
+                  posttext: ""
+                }
+
+                this.setState({
+                  new_password: "",
+                  new_password_confirmation: ""
+                });
+              }
+            } else if (errors.password_confirmation != undefined) {
+              if (errors.password_confirmation.includes("doesn't match Password")) {
+                message = {
+                  type: "error",
+                  text: "Password confirmation is not the same as password.",
+                  posttext: ""
+                }
+
+                this.setState({
+                  new_password: "",
+                  new_password_confirmation: ""
+                });
+              }
+            }
           }
         } else {
-          console.log("wrong password")
-          //todo alert
+          message = {
+            type: "error",
+            text: "Incorrect old password.",
+            posttext: ""
+          }
+
+          this.setState({
+            old_password: ""
+          });
         }
+        
+        this.onAlert(message);
+        navigate('/account');
       });
   }
 
@@ -80,6 +134,20 @@ class AccountScreen extends React.Component {
     }
   }
 
+  onAlert = message => {
+    this.setState({
+      alert_displayed: true,
+      alert_message: message
+    })
+  }
+
+  onClose = () => {
+    this.setState({
+      alert_displayed: false,
+      alert_message: {}
+    })
+  }
+
   render () {
     const show_form_button = 
       (
@@ -93,7 +161,7 @@ class AccountScreen extends React.Component {
 
     const change_password_form = 
       (
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.onChangePassword}>
           <div className="form-group">
             <label htmlFor="old_password">Old Password</label>
             <input
@@ -116,6 +184,7 @@ class AccountScreen extends React.Component {
               required
               onChange={this.onChange}
             />
+            <small className="sm">Password must have a minimum of 8 characters.</small>
           </div>
 
           <div className="form-group">
@@ -143,6 +212,13 @@ class AccountScreen extends React.Component {
             Back
           </button>
         </form>
+      );
+
+    const alert =
+      (
+        <Alert
+          message={this.state.alert_message}
+          onClose={this.onClose}/>
       );
 
     return (
@@ -173,6 +249,8 @@ class AccountScreen extends React.Component {
               </h1>
 
               <hr className="my-4" />
+
+              {this.state.alert_displayed ? alert : null}
 
               {this.state.show_password_form
                 ? change_password_form

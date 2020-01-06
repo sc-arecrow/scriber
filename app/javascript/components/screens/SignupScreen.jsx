@@ -2,6 +2,8 @@ import React from "react";
 import axios from 'axios';
 import { Link, navigate } from '@reach/router'
 
+import Alert from '../resources/Alert';
+
 class SignupScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -9,11 +11,15 @@ class SignupScreen extends React.Component {
     this.state = {
       email: "",
       password: "",
-      password_confirmation: ""
+      password_confirmation: "",
+      alert_displayed: false,
+      alert_message: {}
     };
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onAlert = this.onAlert.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   onChange = event => {
@@ -38,12 +44,79 @@ class SignupScreen extends React.Component {
           this.props.onLogin(response.data)
           navigate('/dashboard');
         } else {
+          const errors = response.data.errors;
+          console.log(errors);
+          let message;
+
+          if (errors.email != undefined) {
+            if (errors.email.includes("has already been taken")) {
+              message = {
+                type: "error",
+                text: "The email has already been used.",
+                posttext: ""
+              }
+            } else if (errors.email.includes("not a valid email")) {
+              message = {
+                type: "error",
+                text: "Invalid email.",
+                posttext: ""
+              }
+            }
+          } else if (errors.password != undefined) {
+            if (errors.password.includes("is too short (minimum is 8 characters)")) {
+              message = {
+                type: "error",
+                text: "Password is too short.",
+                posttext: ""
+              }
+
+              this.setState({
+                password: "",
+                password_confirmation: ""
+              })
+            }
+          } else if (errors.password_confirmation != undefined) {
+            if (errors.password_confirmation.includes("doesn't match Password")) {
+              message = {
+                type: "error",
+                text: "Password confirmation is not the same as password.",
+                posttext: ""
+              }
+
+              this.setState({
+                password_confirmation: ""
+              })
+            }
+          }
+
+          this.onAlert(message);
           navigate('/signup');
         }
       });
   }
 
+  onAlert = message => {
+    this.setState({
+      alert_displayed: true,
+      alert_message: message
+    })
+  }
+
+  onClose = () => {
+    this.setState({
+      alert_displayed: false,
+      alert_message: {}
+    })
+  }
+
   render () {
+    const alert =
+      (
+        <Alert
+          message={this.state.alert_message}
+          onClose={this.onClose}/>
+      );
+
     return (
       <div className="container mt-5">
         <div className="row">
@@ -54,6 +127,8 @@ class SignupScreen extends React.Component {
             </h1>
 
             <hr className="my-4" />
+
+            {this.state.alert_displayed ? alert : null}
 
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
@@ -78,6 +153,7 @@ class SignupScreen extends React.Component {
                   required
                   onChange={this.onChange}
                 />
+                <small className="sm">Password must have a minimum of 8 characters.</small>
               </div>
 
               <div className="form-group">

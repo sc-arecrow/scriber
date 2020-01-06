@@ -2,17 +2,23 @@ import React from "react";
 import axios from "axios";
 import { Link, navigate } from "@reach/router";
 
+import Alert from '../resources/Alert'
+
 class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      alert_displayed: false,
+      alert_message: {}
     };
     
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onAlert = this.onAlert.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   onChange = event => {
@@ -36,12 +42,52 @@ class LoginScreen extends React.Component {
           this.props.onLogin(response.data);
           navigate('/dashboard');
         } else {
+          const message = (response.data.error == "user does not exist")
+            ? {
+              type: "error",
+              text: "User does not exist. Click ",
+              link_route: "/signup",
+              link_content: "here",
+              posttext: " to sign up."
+            } 
+            : {
+              type: "error",
+              text: "Incorrect password, try again.",
+              posttext: ""
+            }
+          
+          this.setState({
+            password: ""
+          });
+          
+          this.onAlert(message);
           navigate('/login');
         }
       });
   }
 
+  onAlert = message => {
+    this.setState({
+      alert_displayed: true,
+      alert_message: message
+    })
+  }
+
+  onClose = () => {
+    this.setState({
+      alert_displayed: false,
+      alert_message: {}
+    })
+  }
+
   render () {
+    const alert =
+      (
+        <Alert
+          message={this.state.alert_message}
+          onClose={this.onClose}/>
+      );
+
     return (
       <div className="container mt-5">
         <div className="row">
@@ -52,6 +98,8 @@ class LoginScreen extends React.Component {
             </h1>
 
             <hr className="my-4" />
+
+            {this.state.alert_displayed ? alert : null}
 
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
