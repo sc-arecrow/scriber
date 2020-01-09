@@ -5,4 +5,5 @@ class Task < ApplicationRecord
 
   validates :title, presence: true
   validates :checked, presence: true
+  validates :deadline, presence: true
 end

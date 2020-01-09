@@ -102,6 +102,36 @@ class Task extends React.Component {
         </button>
       );
 
+    const edit_task_form = this.state.show_edit 
+      ? <EditTaskForm 
+          user={this.props.user}
+          task={this.props.task}
+          onChangeEdit={this.onChangeEdit}
+          onChangeTasks={this.props.onChangeTasks}
+          onUpdateTasks={this.props.onUpdateTasks}/> 
+      : null;
+
+    const deadline = this.props.task.deadline == "no deadline"
+      ? "No deadline"
+      : new Date(parseInt(this.props.task.deadline));
+
+    const icon = (
+      <a className="far fa-calendar-alt"></a>
+    );
+
+    const deadline_label = (
+      <span className={checked ? 'completed ml-2 mr-3' : "ml-2 mr-3"}>{deadline == "No deadline" ? deadline : deadline.toLocaleDateString()}</span>
+    );
+
+    const delete_button = (
+      <button
+        type="button"
+        className='btn btn-sm custom-button'
+        onClick={this.onRemove}>
+        <span className="fas fa-trash-alt"></span>
+      </button>
+    );
+
     return (
       <li
         className={checked
@@ -117,12 +147,17 @@ class Task extends React.Component {
               ? null
               : checkbox}
 
-            <label className={checked ? 'completed ml-3' : "ml-3"}>
-              {this.props.task.title}
-            </label>
+            <span className={this.state.show_edit ? "" : checked ? 'completed ml-3' : "ml-3"}>
+              {this.state.show_edit ? null : this.props.task.title}
+            </span>
+
+            {edit_task_form}
           </div>
 
           <div>
+            {this.state.show_edit ? null : icon}
+            {this.state.show_edit ? null : deadline_label}
+            
             {(!this.state.checked && this.props.toggle_tag)
               ? <TagTaskForm 
                   hovering={this.state.hovering}
@@ -134,26 +169,10 @@ class Task extends React.Component {
                   updateTasksOfTag={this.props.updateTasksOfTag}/> 
               : null}
             
-            {this.state.checked ? null : edit_button}
+            {this.state.checked || this.state.show_edit ? null : edit_button}
 
-            <button
-              type="button"
-              className='btn btn-sm custom-button'
-              onClick={this.onRemove}>
-              <span className="fas fa-trash-alt"></span>
-            </button>
+            {this.state.show_edit ? null : delete_button}
           </div>
-        </div>
-
-        <div>
-          {this.state.show_edit 
-            ? <EditTaskForm 
-                user={this.props.user}
-                task={this.props.task}
-                onChangeEdit={this.onChangeEdit}
-                onChangeTasks={this.props.onChangeTasks}
-                onUpdateTasks={this.props.onUpdateTasks}/> 
-            : null}
         </div>
       </li>
     )

@@ -153,32 +153,12 @@ class DashboardScreen extends React.Component {
           <div className="row">
             <div className="col-md-2" />
             <div className="col-md-5">
-              <div className="row align-items-center justify-content-left">
+              <ul className="list-group">
                 <AddTaskForm 
                   user={this.props.user} 
                   tags={tags}
                   onChangeTasks={this.props.onChangeTasks}
                   onUpdateTasks={this.props.onUpdateTasks}/>
-              </div>
-
-              <hr className="my-4" />
-            </div>
-            <div className="col-md-3">
-              <div className="row align-items-center justify-content-left">
-                <AddTagForm 
-                  user={this.props.user}
-                  onChangeTags={this.props.onChangeTags}/> 
-              </div>
-
-              <hr className="my-4" />
-            </div>
-            <div className="col-md-2" />
-          </div>
-
-          <div className="row">
-            <div className="col-md-2" />
-            <div className="col-md-5">
-              <ul className="list-group">
                 {unchecked_tasks}
               </ul>
               
@@ -193,6 +173,9 @@ class DashboardScreen extends React.Component {
 
             <div className="col-md-3">
               <ul className="list-group">
+                <AddTagForm 
+                  user={this.props.user}
+                  onChangeTags={this.props.onChangeTags}/>
                 {display_tags}
               </ul>
             </div>
