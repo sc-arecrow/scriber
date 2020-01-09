@@ -63,46 +63,46 @@ class EditTaskForm extends React.Component {
 
   render () {
     return (
-      <form className="form-inline" onSubmit={this.onSubmit}>
-        <div className="input-group col-auto">
-          <input
-            type="text"
-            name="title"
-            className="form-control"
-            value={this.state.title}
-            required
-            onChange={this.onChange}>
-          </input>
-        </div>
-
-        <div className="input-group col-auto">
-          <DayPickerInput
-            component={props => 
-              <button {...props} 
-                type="button"
-                className='btn btn-sm custom-button'>
-                <span className="far fa-calendar-alt"></span>
-              </button>}
-            dayPickerProps={{
-              onDayClick: this.onDayClick,
-              selectedDays: this.state.deadline,
-              todayButton: 'No deadline',
-              onTodayButtonClick: this.onClearDeadline
-            }}
-          />
-          <div className="ml-3 mr-1">
-            {this.state.deadline
-              ? this.state.deadline.toLocaleDateString()
-              : "No deadline"}
+      <form onSubmit={this.onSubmit}>
+        <div className="d-flex justify-content-between">
+          <div>
+            <input
+              type="text"
+              name="title"
+              className="form-control form-control-sm"
+              value={this.state.title}
+              required
+              onChange={this.onChange}>
+            </input>
           </div>
-        </div>
 
-        <div className="input-group col-auto">
-          <button
-            type="submit"
-            className="btn btn-sm custom-button">
-            <span className="far fa-edit"></span>
-          </button>
+          <div>
+            <DayPickerInput
+              component={props => 
+                <button {...props} 
+                  type="button"
+                  className='btn btn-sm custom-button'>
+                  <span className="far fa-calendar-alt"></span>
+                </button>}
+              dayPickerProps={{
+                onDayClick: this.onDayClick,
+                selectedDays: this.state.deadline,
+                todayButton: 'No deadline',
+                onTodayButtonClick: this.onClearDeadline
+              }}
+            />
+            <span className="mx-3">
+              {this.state.deadline
+                ? this.state.deadline.toLocaleDateString()
+                : "No deadline"}
+            </span>
+
+            <button
+              type="submit"
+              className="btn btn-sm custom-button">
+              <span className="far fa-edit"></span>
+            </button>
+          </div>
         </div>
       </form>
     )

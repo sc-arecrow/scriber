@@ -91,7 +91,7 @@ class Task extends React.Component {
           onClick={this.onCheck}>
         </button>
       );
-
+    
     const edit_button =
       (
         <button
@@ -150,8 +150,6 @@ class Task extends React.Component {
             <span className={this.state.show_edit ? "" : checked ? 'completed ml-3' : "ml-3"}>
               {this.state.show_edit ? null : this.props.task.title}
             </span>
-
-            {edit_task_form}
           </div>
 
           <div>
@@ -174,6 +172,8 @@ class Task extends React.Component {
             {this.state.show_edit ? null : delete_button}
           </div>
         </div>
+
+        {edit_task_form}
       </li>
     )
   }
