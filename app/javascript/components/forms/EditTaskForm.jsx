@@ -41,8 +41,7 @@ class EditTaskForm extends React.Component {
       title: this.state.title,
       checked: "false",
       deadline: this.state.deadline == undefined ? "no deadline" : this.state.deadline.getTime().toString(),
-      tag_id: "editing title",
-      tagged: null
+      tag_id: "editing title"
     }
 
     let url = '/users/' + this.props.user.id.toString() + '/tasks/' + this.props.task.id.toString();

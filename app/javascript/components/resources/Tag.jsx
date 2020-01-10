@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 
 import EditTagForm from '../forms/EditTagForm';
+import TagTaskForm from '../forms/TagTaskForm';
 
 class Tag extends React.Component {
   constructor(props) {
@@ -14,7 +15,6 @@ class Tag extends React.Component {
     }
 
     this.onClick = this.onClick.bind(this);
-    this.onChangeEdit = this.onChangeEdit.bind(this);
     this.onRemove = this.onRemove.bind(this);
     this.onFilter = this.onFilter.bind(this);
   }
@@ -22,18 +22,16 @@ class Tag extends React.Component {
   onClick = () => {
     if (this.state.clicked) {
       this.props.onToggleTag("close");
-      this.setState({clicked: false});
+      this.setState({
+        clicked: false,
+        show_edit: false
+      });
     } else {
       this.props.onToggleTag(this.props.tag);
-      this.setState({clicked: true});
-    }
-  }
-
-  onChangeEdit = () => {
-    if (this.state.show_edit) {
-      this.setState({show_edit: false});
-    } else {
-      this.setState({show_edit: true});
+      this.setState({
+        clicked: true,
+        show_edit: true
+      });
     }
   }
 
@@ -58,59 +56,74 @@ class Tag extends React.Component {
   }
 
   render () {
-    return (
-      <li
-        className={(this.state.filtered || this.state.clicked)
-          ? "list-group-item list-group-item-action list-group-item-dark"
-          : "list-group-item list-group-item-action"}
-        >
-        
-        <div className="d-flex justify-content-between">
-          <div>
-            <button
-              type="button"
-              className='btn btn-sm custom-button mr-2'
-              onClick={this.onClick}>
-              <span className="fas fa-tag"></span>
-            </button>
+    const edit_and_delete_button = 
+    (
+      <div>
+        <button
+          type="button"
+          className='btn btn-sm custom-button mr-2'
+          onClick={this.onClick}>
+          <span className="far fa-edit"></span>
+        </button>
+        <button
+          type="button"
+          className='btn btn-sm custom-button'
+          onClick={this.onRemove}>
+          <span className="fas fa-trash-alt"></span>
+        </button>
+      </div>
+    );
 
-            <label className="ml-2">
-              {this.props.tag.name}
-            </label>
-          </div>
+    const normal = 
+    (
+      <div className="d-flex justify-content-between">
+        <div>
+          {(this.props.toggle_task)
+            ? <TagTaskForm 
+                hovering={this.state.hovering}
+                user={this.props.user}
+                task={this.props.task_toggled}
+                tag={this.props.tag}
+                tagged={this.props.tagged}
+                getTasksOf={this.props.getTasksOf}
+                updateTagsOfTask={this.props.updateTagsOfTask}
+                update_from={"tag"}/> 
+            : <button
+                type="button"
+                className='btn btn-sm custom-button mr-2'
+                onClick={this.onFilter}>
+                <span className="fas fa-filter"></span>
+              </button>}
 
-          <div>
-            <button
-              type="button"
-              className='btn btn-sm custom-button mr-2'
-              onClick={this.onFilter}>
-              <span className="fas fa-filter"></span>
-            </button>
-
-            <button
-              type="button"
-              className='btn btn-sm custom-button mr-2'
-              onClick={this.onChangeEdit}>
-              <span className="far fa-edit"></span>
-            </button>
-
-            <button
-              type="button"
-              className='btn btn-sm custom-button'
-              onClick={this.onRemove}>
-              <span className="fas fa-trash-alt"></span>
-            </button>
-          </div>
+          <span className="ml-2">
+            {this.props.tag.name}
+          </span>
         </div>
 
+        {this.props.toggle_task ? null : edit_and_delete_button}
+      </div>
+    );
+
+    const edit_tag_form = 
+    (
+      <EditTagForm 
+        user={this.props.user}
+        tag={this.props.tag}
+        onChangeTags={this.props.onChangeTags}
+        onChangeEdit={this.onClick}/>
+    )
+    return (
+      <li
+        className={(this.state.filtered)
+          ? "list-group-item list-group-item-action list-group-item-success"
+          : this.state.show_edit
+          ? "list-group-item list-group-item-action list-group-item-primary"
+          : "list-group-item list-group-item-action"}
+        >
         <div>
           {this.state.show_edit 
-            ? <EditTagForm 
-                user={this.props.user}
-                tag={this.props.tag}
-                onChangeTags={this.props.onChangeTags}
-                onChangeEdit={this.onChangeEdit}/> 
-            : null}
+            ? edit_tag_form
+            : normal}
         </div>
       </li>
     )

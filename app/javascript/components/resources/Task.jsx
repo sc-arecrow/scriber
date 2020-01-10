@@ -50,8 +50,10 @@ class Task extends React.Component {
 
   onChangeEdit = () => {
     if (this.state.show_edit) {
+      this.props.onToggleTask("close");
       this.setState({show_edit: false});
     } else {
+      this.props.onToggleTask(this.props.task);
       this.setState({show_edit: true});
     }
   }
@@ -136,6 +138,8 @@ class Task extends React.Component {
       <li
         className={checked
           ? "list-group-item list-group-item-action list-group-item-dark"
+          : this.state.show_edit
+          ? "list-group-item list-group-item-action list-group-item-primary"
           : "list-group-item list-group-item-action"}
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
@@ -156,6 +160,10 @@ class Task extends React.Component {
             {this.state.show_edit ? null : icon}
             {this.state.show_edit ? null : deadline_label}
             
+            {(this.state.checked || this.state.show_edit) || this.props.toggle_tag ? null : edit_button}
+
+            {this.state.show_edit || this.props.toggle_tag ? null : delete_button}
+
             {(!this.state.checked && this.props.toggle_tag)
               ? <TagTaskForm 
                   hovering={this.state.hovering}
@@ -163,13 +171,9 @@ class Task extends React.Component {
                   task={this.props.task}
                   tag={this.props.tag_toggled}
                   tagged={this.props.tagged}
-                  getTasksOf={this.props.getTasksOf}
-                  updateTasksOfTag={this.props.updateTasksOfTag}/> 
+                  updateTasksOfTag={this.props.updateTasksOfTag}
+                  update_from={"task"}/> 
               : null}
-            
-            {this.state.checked || this.state.show_edit ? null : edit_button}
-
-            {this.state.show_edit ? null : delete_button}
           </div>
         </div>
 

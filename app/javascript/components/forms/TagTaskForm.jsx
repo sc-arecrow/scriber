@@ -12,8 +12,7 @@ class TagTaskForm extends React.Component {
     let task = {
       title: null,
       checked: "false",
-      tag_id: this.props.tag.id,
-      tagged: this.props.tagged
+      tag_id: this.props.tag.id
     }
 
     let url = '/users/' + this.props.user.id.toString() + '/tasks/' + this.props.task.id.toString();
@@ -21,7 +20,11 @@ class TagTaskForm extends React.Component {
     axios
       .patch(url, {task}, {withCredentials: true})
       .then(response => {
-        this.props.updateTasksOfTag(response.data.tasks);
+        if (this.props.update_from == "task") {
+          this.props.updateTasksOfTag(response.data.tasks);
+        } else {
+          this.props.updateTagsOfTask(response.data.tags);
+        }
       })
   }
 
@@ -32,10 +35,10 @@ class TagTaskForm extends React.Component {
         type="button"
         onClick={this.onClick}
         className={this.props.tagged
-          ? 'btn btn-sm custom-button mr-2'
+          ? 'btn btn-sm custom-button ' + (this.props.update_from == "task" ? "ml-2" : "mr-2")
           : this.props.hovering
-            ? 'custom-checkbox align-middle hovering mr-2'
-            : 'custom-checkbox align-middle mr-2'}>
+            ? 'custom-checkbox align-middle hovering ' + (this.props.update_from == "task" ? "ml-2" : "mr-2")
+            : 'custom-checkbox align-middle ' + (this.props.update_from == "task" ? "ml-2" : "mr-2")}>
         {this.props.tagged
           ? tag_icon
           : null}

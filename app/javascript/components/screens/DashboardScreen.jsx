@@ -16,7 +16,10 @@ class DashboardScreen extends React.Component {
     this.state = {
       toggle_tag: false,
       tag_toggled: {},
-      tasks_of_tag: []
+      tasks_of_tag: [],
+      toggle_task: false,
+      task_toggled: {},
+      tags_of_task: []
     }
 
     this.getTasksOf = this.getTasksOf.bind(this);
@@ -35,8 +38,22 @@ class DashboardScreen extends React.Component {
       });
   }
 
+  getTagsOf = task => {
+    let url = '/users/' + this.props.user.id.toString() + '/tasks/' + task.id.toString();
+
+    axios
+      .get(url)
+      .then(response => {
+        this.setState({tags_of_task: response.data.tags})
+      });
+  }
+
   updateTasksOfTag = tasks => {
     this.setState({tasks_of_tag: tasks});
+  }
+
+  updateTagsOfTask = tags => {
+    this.setState({tags_of_task: tags});
   }
 
   onToggleTag = tag => {
@@ -56,9 +73,31 @@ class DashboardScreen extends React.Component {
     }
   }
 
+  onToggleTask = task => {
+    if (task === "close") {
+      this.setState({
+        toggle_task: false,
+        task_toggled: {},
+        tags_of_task: [],
+      });
+    } else {
+      this.setState({
+        toggle_task: true,
+        task_toggled: task
+      });
+
+      this.getTagsOf(task);
+    }
+  }
+
   isTagged = task => {
     const tasks = this.state.tasks_of_tag;
     return tasks.find(t => t.id == task.id) !== undefined;
+  }
+
+  isTasked = tag => {
+    const tags = this.state.tags_of_task;
+    return tags.find(t => t.id == tag.id) !== undefined;
   }
 
   render () {
@@ -76,10 +115,10 @@ class DashboardScreen extends React.Component {
           toggle_tag={this.state.toggle_tag}
           tag_toggled={this.state.tag_toggled}
           tagged={this.isTagged(task)}
-          getTasksOf={this.getTasksOf}
           updateTasksOfTag={this.updateTasksOfTag}
           onChangeTasks={this.props.onChangeTasks}
-          onUpdateTasks={this.props.onUpdateTasks} />
+          onUpdateTasks={this.props.onUpdateTasks}
+          onToggleTask={this.onToggleTask} />
       });
 
     let unchecked_tasks = displayed_tasks
@@ -93,10 +132,10 @@ class DashboardScreen extends React.Component {
           toggle_tag={this.state.toggle_tag}
           tag_toggled={this.state.tag_toggled}
           tagged={this.isTagged(task)}
-          getTasksOf={this.getTasksOf}
           updateTasksOfTag={this.updateTasksOfTag}
           onChangeTasks={this.props.onChangeTasks}
-          onUpdateTasks={this.props.onUpdateTasks} />
+          onUpdateTasks={this.props.onUpdateTasks}
+          onToggleTask={this.onToggleTask} />
       });
 
     let display_tags = tags.map(tag => {
@@ -104,7 +143,11 @@ class DashboardScreen extends React.Component {
         key={tag.id}
         user={this.props.user}
         tag={tag}
+        toggle_task={this.state.toggle_task}
         tag_toggled={this.state.tag_toggled}
+        task_toggled={this.state.task_toggled}
+        tagged={this.isTasked(tag)}
+        updateTagsOfTask={this.updateTagsOfTask}
         onChangeTags={this.props.onChangeTags}
         onToggleTag={this.onToggleTag}
         onFilterTag={this.props.onFilterTag} />

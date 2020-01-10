@@ -13,6 +13,15 @@ class TasksController < ApplicationController
     end
   end
 
+  def show
+    @task = current_user.tasks.find(params[:id])
+    @tags = @task.tags
+
+    render json: {
+      tags: @tags
+    }
+  end
+
   def update
     @task = current_user.tasks.find(params[:id])
 
@@ -30,14 +39,15 @@ class TasksController < ApplicationController
     else
       @tag = current_user.tags.find(task_params[:tag_id])
 
-      if task_params[:tagged]
+      if @task.tags.exists?(@tag.id)
         @task.tags.destroy(@tag)
       else
         @task.tags << @tag
       end
 
       render json: {
-        tasks: @tag.tasks
+        tasks: @tag.tasks,
+        tags: @task.tags
       }
     end    
   end
@@ -53,6 +63,6 @@ class TasksController < ApplicationController
   
   private
     def task_params
-      params.require(:task).permit(:title, :checked, :deadline, :tag_id, :tagged)
+      params.require(:task).permit(:title, :checked, :deadline, :tag_id)
     end
 end
