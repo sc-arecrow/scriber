@@ -10,7 +10,6 @@ class SearchTaskForm extends React.Component {
 
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onClear = this.onClear.bind(this);
   }
 
   onChange = event => {
@@ -23,11 +22,6 @@ class SearchTaskForm extends React.Component {
     event.preventDefault();
 
     this.props.onSearchTaskByTitle(this.state.search_title.toLowerCase());
-  }
-
-  onClear = () => {
-    this.setState({search_title: ""});
-    this.props.onSearchTaskByTitle("");
   }
 
   render () {
@@ -48,16 +42,10 @@ class SearchTaskForm extends React.Component {
 
           <div className="input-group col-auto">
             <button
+              disabled={this.props.toggle_task || this.props.toggle_tag}
               type="submit"
               className="btn custom-button mr-4">
-              Search
-            </button>
-
-            <button
-              type="reset"
-              onClick={this.onClear}
-              className="btn custom-button">
-              Show All
+              <a className="fas fa-search"></a>
             </button>
           </div>
         </form>

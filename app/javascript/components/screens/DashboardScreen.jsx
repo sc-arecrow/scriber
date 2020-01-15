@@ -1,6 +1,7 @@
 import React from "react";
 import axios from 'axios';
 import { Link } from '@reach/router';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 
 import Task from '../resources/Task';
 import Tag from '../resources/Tag';
@@ -19,13 +20,20 @@ class DashboardScreen extends React.Component {
       tasks_of_tag: [],
       toggle_task: false,
       task_toggled: {},
-      tags_of_task: []
+      tags_of_task: [],
+      filter_tag: false
     }
 
     this.getTasksOf = this.getTasksOf.bind(this);
+    this.getTagsOf = this.getTagsOf.bind(this);
     this.updateTasksOfTag = this.updateTasksOfTag.bind(this);
+    this.updateTagsOfTask = this.updateTagsOfTask.bind(this);
     this.onToggleTag = this.onToggleTag.bind(this);
+    this.onToggleTask = this.onToggleTask.bind(this);
+    this.onClear = this.onClear.bind(this);
+    this.onFilter = this.onFilter.bind(this);
     this.isTagged = this.isTagged.bind(this);
+    this.isTasked = this.isTasked.bind(this);
   }
 
   getTasksOf = tag => {
@@ -90,6 +98,19 @@ class DashboardScreen extends React.Component {
     }
   }
 
+  onClear = () => {
+    this.props.onSearchTaskByTitle("");
+    this.setState({
+      filter_tag: false
+    });
+  }
+
+  onFilter = filtered => {
+    this.setState({
+      filter_tag: filtered
+    });
+  }
+
   isTagged = task => {
     const tasks = this.state.tasks_of_tag;
     return tasks.find(t => t.id == task.id) !== undefined;
@@ -150,7 +171,9 @@ class DashboardScreen extends React.Component {
         updateTagsOfTask={this.updateTagsOfTask}
         onChangeTags={this.props.onChangeTags}
         onToggleTag={this.onToggleTag}
-        onFilterTag={this.props.onFilterTag} />
+        onFilterTag={this.props.onFilterTag}
+        onFilter={this.onFilter}
+        filtered={this.state.filter_tag} />
     });
 
     const delete_below_button = 
@@ -184,8 +207,24 @@ class DashboardScreen extends React.Component {
           <div className="row mt-4">
             <div className="col-md-2" />
             <div className="col-md-5">
-              <div className="row align-items-center justify-content-left">
-                <SearchTaskForm onSearchTaskByTitle={this.props.onSearchTaskByTitle}/>
+              <div className="row d-flex justify-content-between">
+                <SearchTaskForm
+                  onSearchTaskByTitle={this.props.onSearchTaskByTitle}
+                  toggle_tag={this.state.toggle_tag}
+                  toggle_task={this.state.toggle_task}/>
+                
+                <div>
+                  <DropdownButton
+                    disabled={this.state.toggle_task || this.state.toggle_tag}
+                    id="sort-dropdown" 
+                    className="mr-3" 
+                    title="Sort by " 
+                    alignRight>
+                    <Dropdown.Item onClick={this.props.onSortTasksByDeadline}>Deadline</Dropdown.Item>
+                    <Dropdown.Item onClick={this.props.onSortTasksByTitle}>Alphabetical</Dropdown.Item>
+                    <Dropdown.Item onClick={this.onClear}>Show all</Dropdown.Item>
+                  </DropdownButton>
+                </div>
               </div>
 
               <hr className="my-4" />

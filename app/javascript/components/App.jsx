@@ -28,6 +28,8 @@ class App extends React.Component {
 
     this.onSearchTaskByTitle = this.onSearchTaskByTitle.bind(this);
     this.onUpdateTasks = this.onUpdateTasks.bind(this);
+    this.onSortTasksByDeadline = this.onSortTasksByDeadline.bind(this);
+    this.onSortTasksByTitle = this.onSortTasksByTitle.bind(this);
     this.onDeleteBelow = this.onDeleteBelow.bind(this);
     this.displayTasksOf = this.displayTasksOf.bind(this);
     this.onFilterTag = this.onFilterTag.bind(this);
@@ -92,6 +94,50 @@ class App extends React.Component {
     this.setState({
       displayed_tasks: tasks
     });
+  }
+
+  onSortTasksByDeadline = () => {
+    const displayed_tasks = this.state.displayed_tasks;
+
+    const comparer = (x, y) => {
+      const x_deadline = x.deadline;
+      const y_deadline = y.deadline;
+
+      if (x_deadline == y_deadline) {
+        return 0;
+      } else if (x_deadline == "no deadline") {
+        return 1;
+      } else  if (y_deadline == "no deadline") {
+        return -1;
+      } else {
+        return parseInt(x_deadline) < parseInt(y_deadline) ? -1 : 1;
+      }
+    }
+
+    const sorted_tasks = displayed_tasks.sort(comparer);
+
+    this.onUpdateTasks(sorted_tasks);    
+  }
+
+  onSortTasksByTitle = () => {
+    const displayed_tasks = this.state.displayed_tasks;
+
+    const comparer = (x, y) => {
+      const x_title = x.title;
+      const y_title = y.title;
+
+      if (x_title < y_title) {
+        return -1;
+      } else if (x_title > y_title) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }
+
+    const sorted_tasks = displayed_tasks.sort(comparer);
+
+    this.onUpdateTasks(sorted_tasks);
   }
 
   onSearchTaskByTitle = title => {
@@ -163,6 +209,8 @@ class App extends React.Component {
           onChangeTags={this.onChangeTags}
           onLogout={this.onLogout}
           onSearchTaskByTitle={this.onSearchTaskByTitle}
+          onSortTasksByDeadline={this.onSortTasksByDeadline}
+          onSortTasksByTitle={this.onSortTasksByTitle}
           onUpdateTasks={this.onUpdateTasks}
           onDeleteBelow={this.onDeleteBelow}
           displayTasksOf={this.displayTasksOf}

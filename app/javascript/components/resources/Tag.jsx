@@ -48,11 +48,17 @@ class Tag extends React.Component {
   onFilter = () => {
     if (this.state.filtered) {
       this.setState({filtered: false});
+      this.props.onFilter(false);
       this.props.onFilterTag(false, null);
     } else {
       this.setState({filtered: true});
+      this.props.onFilter(true);
       this.props.onFilterTag(true, this.props.tag);
     }
+  }
+
+  componentWillReceiveProps({filtered}) {
+    this.setState({filtered: filtered});
   }
 
   render () {

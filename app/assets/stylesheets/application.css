@@ -75,3 +75,7 @@
 .hovering {
   background-color: #ccc;
 }
+
+#sort-dropdown {
+  background-color: #343a40;
+}
