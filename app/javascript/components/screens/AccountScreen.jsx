@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Link, navigate } from '@reach/router';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 
 import Alert from '../resources/Alert'
 
@@ -9,7 +10,6 @@ class AccountScreen extends React.Component {
     super(props);
 
     this.state = {
-      show_password_form: false,
       old_password: "",
       new_password: "",
       new_password_confirmation: "",
@@ -18,7 +18,6 @@ class AccountScreen extends React.Component {
     }
 
     this.onChange = this.onChange.bind(this);
-    this.onShowPasswordForm = this.onShowPasswordForm.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onDeleteAccount = this.onDeleteAccount.bind(this);
     this.onAlert = this.onAlert.bind(this);
@@ -29,14 +28,6 @@ class AccountScreen extends React.Component {
     this.setState({
       [event.target.name]: event.target.value
     });
-  }
-
-  onShowPasswordForm = () => {
-    if (this.state.show_password_form) {
-      this.setState({show_password_form: false});
-    } else {
-      this.setState({show_password_form: true});
-    }
   }
 
   onChangePassword = event => {
@@ -153,7 +144,7 @@ class AccountScreen extends React.Component {
       (
         <button
           type="button"
-          className="btn btn-lg custom-button"
+          className="btn custom-button"
           onClick={this.onShowPasswordForm}>
           Change Password
         </button>
@@ -201,15 +192,8 @@ class AccountScreen extends React.Component {
 
           <button
             type="submit"
-            className="btn btn-lg custom-button mr-3">
+            className="btn custom-button mr-3">
             Change Password
-          </button>
-
-          <button
-            type="reset"
-            className="btn btn-lg custom-button"
-            onClick={this.onShowPasswordForm}>
-            Back
           </button>
         </form>
       );
@@ -250,21 +234,41 @@ class AccountScreen extends React.Component {
 
               <hr className="my-4" />
 
+              <h5>Deadline Urgency Setting</h5>
+              <small>Pick the duration of time before your deadlines become urgent.</small>
+
+              <DropdownButton
+                id="dropdown"
+                drop="right"
+                className="mt-2"
+                title="placeholder"
+                >
+                <Dropdown.Item >On the day</Dropdown.Item>
+                <Dropdown.Item >1 day before</Dropdown.Item>
+                <Dropdown.Item >2 days before</Dropdown.Item>
+              </DropdownButton>
+
+              <hr className="my-4" />
+
+              <h5>Change Password</h5>
+
               {this.state.alert_displayed ? alert : null}
 
-              {this.state.show_password_form
-                ? change_password_form
-                : show_form_button}
+              {change_password_form}
 
-              <p>
-                <br />
-                <button
-                  type="button"
-                  className="btn btn-lg custom-button"
-                  onClick={this.onDeleteAccount}>
-                  Delete Account
-                </button>
-              </p>
+              <hr className="my-4" />
+
+              <h5>Delete Account</h5>
+              <small>Be warned, once you delete your account, all data will be lost!</small>
+              <br/>
+              <button
+                type="button"
+                className="btn btn-danger mt-2"
+                onClick={this.onDeleteAccount}>
+                Delete Account
+              </button>
+
+              <hr className="my-4" />
             </div>
           </div>
         </div>

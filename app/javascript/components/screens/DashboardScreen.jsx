@@ -216,7 +216,7 @@ class DashboardScreen extends React.Component {
                 <div>
                   <DropdownButton
                     disabled={this.state.toggle_task || this.state.toggle_tag}
-                    id="sort-dropdown" 
+                    id="dropdown" 
                     className="mr-3" 
                     title="Sort by " 
                     alignRight>

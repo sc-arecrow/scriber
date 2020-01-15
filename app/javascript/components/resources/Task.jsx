@@ -81,6 +81,23 @@ class Task extends React.Component {
     let checked = this.state.checked;
     let hovering = this.state.hovering;
 
+    const current_time = new Date();
+    const deadline_time = this.props.task.deadline == "no deadline"
+      ? this.props.task.deadline
+      : new Date(parseInt(this.props.task.deadline));
+
+    const time_difference = this.props.task.deadline == "no deadline"
+      ? "no deadline"
+      : current_time.getTime() - deadline_time.getTime();
+
+    const urgency = this.props.task.deadline == "no deadline"
+      ? undefined
+      : time_difference >= 86400000
+      ? "due"
+      : time_difference < (0 - 0)
+        ? undefined
+        : "urgent";
+
     const checkbox = 
       (
         <button 
@@ -118,11 +135,29 @@ class Task extends React.Component {
       : new Date(parseInt(this.props.task.deadline));
 
     const icon = (
-      <a className="far fa-calendar-alt"></a>
+      <a className={
+        (urgency == "due"
+          ? "deadline-label-due " 
+          : urgency == "urgent"
+          ? "deadline-label-urgent "
+          : "")
+        +
+        "far fa-calendar-alt"}></a>
     );
 
     const deadline_label = (
-      <span className={checked ? 'completed ml-2 mr-3' : "ml-2 mr-3"}>{deadline == "No deadline" ? deadline : deadline.toLocaleDateString()}</span>
+      <span className={
+        (urgency == "due"
+          ? "deadline-label-due " 
+          : urgency == "urgent"
+          ? "deadline-label-urgent "
+          : "")
+        +
+        (checked ? "completed " : "")
+        +
+        "ml-2 mr-3"}>
+        {deadline == "No deadline" ? deadline : deadline.toLocaleDateString()}
+      </span>
     );
 
     const delete_button = (

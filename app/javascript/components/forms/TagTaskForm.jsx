@@ -25,7 +25,7 @@ class TagTaskForm extends React.Component {
         } else {
           this.props.updateTagsOfTask(response.data.tags);
         }
-      })
+      });
   }
 
   render () {

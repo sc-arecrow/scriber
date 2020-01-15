@@ -23,8 +23,8 @@ class UsersController < ApplicationController
   end
 
   def update
-    password_params = params.require(:user).permit(:old_password, :new_password, :new_password_confirmation);
-    if current_user.authenticate(password_params[:old_password])
+    password_params = params.require(:user).permit(:old_password, :new_password, :new_password_confirmation)
+    if (current_user.authenticate(password_params[:old_password]))
       user_params = {
         email: current_user[:email],
         password: password_params[:new_password],

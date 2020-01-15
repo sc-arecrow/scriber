@@ -76,6 +76,16 @@
   background-color: #ccc;
 }
 
-#sort-dropdown {
-  background-color: #343a40;
+.deadline-label-urgent {
+  color: #eb9800 !important;
 }
+
+.deadline-label-due {
+  color: rgb(201, 14, 14) !important;
+}
+
+#dropdown {
+  background-color: #343a40;
+  border-color: #343a40;
+}
+

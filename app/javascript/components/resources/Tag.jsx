@@ -10,8 +10,7 @@ class Tag extends React.Component {
 
     this.state = {
       clicked: false,
-      show_edit: false,
-      filtered: false
+      show_edit: false
     }
 
     this.onClick = this.onClick.bind(this);
@@ -46,19 +45,13 @@ class Tag extends React.Component {
   }
 
   onFilter = () => {
-    if (this.state.filtered) {
-      this.setState({filtered: false});
+    if (this.props.filtered) {
       this.props.onFilter(false);
       this.props.onFilterTag(false, null);
     } else {
-      this.setState({filtered: true});
       this.props.onFilter(true);
       this.props.onFilterTag(true, this.props.tag);
     }
-  }
-
-  componentWillReceiveProps({filtered}) {
-    this.setState({filtered: filtered});
   }
 
   render () {
@@ -120,7 +113,7 @@ class Tag extends React.Component {
     )
     return (
       <li
-        className={(this.state.filtered)
+        className={(this.props.filtered)
           ? "list-group-item list-group-item-action list-group-item-success"
           : this.state.show_edit
           ? "list-group-item list-group-item-action list-group-item-primary"
