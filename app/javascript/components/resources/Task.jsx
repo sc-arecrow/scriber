@@ -90,11 +90,13 @@ class Task extends React.Component {
       ? "no deadline"
       : current_time.getTime() - deadline_time.getTime();
 
+    const urgency_offset = parseInt(this.props.user.urgency_setting) * -86400000;
+
     const urgency = this.props.task.deadline == "no deadline"
       ? undefined
       : time_difference >= 86400000
       ? "due"
-      : time_difference < (0 - 0)
+      : time_difference < urgency_offset
         ? undefined
         : "urgent";
 

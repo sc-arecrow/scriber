@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
+    @user = User.new(user_params.merge(:urgency_setting => "0"))
 
     if @user.save
       log_in
@@ -23,8 +23,19 @@ class UsersController < ApplicationController
   end
 
   def update
-    password_params = params.require(:user).permit(:old_password, :new_password, :new_password_confirmation)
-    if (current_user.authenticate(password_params[:old_password]))
+    password_params = params.require(:user).permit(:old_password, :new_password, :new_password_confirmation, :urgency_setting)
+    if (password_params[:old_password] == "urgency")
+      if current_user.update_attribute(:urgency_setting, password_params[:urgency_setting])
+        render json: {
+          setting_updated: true,
+          user: current_user
+        }
+      else
+        render json: {
+          setting_updated: false
+        }
+      end
+    elsif (current_user.authenticate(password_params[:old_password]))
       user_params = {
         email: current_user[:email],
         password: password_params[:new_password],
@@ -58,7 +69,7 @@ class UsersController < ApplicationController
 
     render json: {
       user_destroyed: true
-    }
+    }   
   end
   
   private

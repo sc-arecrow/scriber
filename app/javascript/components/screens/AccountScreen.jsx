@@ -13,21 +13,70 @@ class AccountScreen extends React.Component {
       old_password: "",
       new_password: "",
       new_password_confirmation: "",
-      alert_displayed: false,
-      alert_message: {}
+      password_alert_displayed: false,
+      password_alert_message: {},
+      urgency_setting_alert_displayed: false,
+      urgency_setting_alert_message: {},
+      urgency_setting: this.props.user.urgency_setting
     }
 
     this.onChange = this.onChange.bind(this);
+    this.onUpdateUrgencySetting = this.onUpdateUrgencySetting.bind(this);
+    this.onSaveUrgencySetting = this.onSaveUrgencySetting.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
     this.onDeleteAccount = this.onDeleteAccount.bind(this);
-    this.onAlert = this.onAlert.bind(this);
-    this.onClose = this.onClose.bind(this);
+    this.onPasswordAlert = this.onPasswordAlert.bind(this);
+    this.onUrgencySettingAlert = this.onUrgencySettingAlert.bind(this);
+    this.onPasswordClose = this.onPasswordClose.bind(this);
+    this.onUrgencySettingClose = this.onUrgencySettingClose.bind(this);
   }
 
   onChange = event => {
     this.setState({
       [event.target.name]: event.target.value
     });
+  }
+
+  onUpdateUrgencySetting = eventKey => {
+    this.setState({
+      urgency_setting: eventKey
+    });
+  }
+
+  onSaveUrgencySetting = event => {
+    event.preventDefault();
+
+    let user = {
+      old_password: "urgency",
+      urgency_setting: this.state.urgency_setting
+    }
+
+    let url = '/users/' + this.props.user.id.toString();
+
+    axios
+      .patch(url, {user}, {withCredentials: true})
+      .then(response => {
+        let message;
+
+        if (response.data.setting_updated) {
+          message = {
+            type: "success",
+            text: "Setting changed!",
+            posttext: ""
+          }
+          
+          this.props.onChangeUrgencySetting(response.data);
+        } else {
+          message = {
+            type: "error",
+            text: "Something went wrong!",
+            posttext: ""
+          }
+        }
+
+        this.onUrgencySettingAlert(message);
+      })
+
   }
 
   onChangePassword = event => {
@@ -102,7 +151,7 @@ class AccountScreen extends React.Component {
           });
         }
         
-        this.onAlert(message);
+        this.onPasswordAlert(message);
         navigate('/account');
       });
   }
@@ -125,30 +174,69 @@ class AccountScreen extends React.Component {
     }
   }
 
-  onAlert = message => {
+  onPasswordAlert = message => {
     this.setState({
-      alert_displayed: true,
-      alert_message: message
+      password_alert_displayed: true,
+      password_alert_message: message
     })
   }
 
-  onClose = () => {
+  onUrgencySettingAlert = message => {
     this.setState({
-      alert_displayed: false,
-      alert_message: {}
+      urgency_setting_alert_displayed: true,
+      urgency_setting_alert_message: message
+    })
+  }
+
+  onPasswordClose = () => {
+    this.setState({
+      password_alert_displayed: false,
+      password_alert_message: {}
+    })
+  }
+
+  onUrgencySettingClose = () => {
+    this.setState({
+      urgency_setting_alert_displayed: false,
+      urgency_setting_alert_message: {}
     })
   }
 
   render () {
-    const show_form_button = 
-      (
-        <button
-          type="button"
-          className="btn custom-button"
-          onClick={this.onShowPasswordForm}>
-          Change Password
-        </button>
-      );
+    const urgency_setting = this.state.urgency_setting == undefined ? this.props.user.urgency_setting : this.state.urgency_setting;
+
+    const update_urgency_setting_form =
+    (
+      <form onSubmit={this.onSaveUrgencySetting}>
+        <div className="d-flex justify-content-between">
+          <div>
+            <DropdownButton
+              id="dropdown"
+              className="mt-2"
+              title={urgency_setting == "0"
+                ? "On the day"
+                : urgency_setting == "1"
+                ? urgency_setting + " day before"
+                : urgency_setting + " days before"}
+              >
+              <Dropdown.Item onSelect={this.onUpdateUrgencySetting} eventKey="0">On the day</Dropdown.Item>
+              <Dropdown.Item onSelect={this.onUpdateUrgencySetting} eventKey="1">1 day before</Dropdown.Item>
+              <Dropdown.Item onSelect={this.onUpdateUrgencySetting} eventKey="2">2 days before</Dropdown.Item>
+              <Dropdown.Item onSelect={this.onUpdateUrgencySetting} eventKey="7">A week before</Dropdown.Item>
+            </DropdownButton>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="btn custom-button mt-2"
+              onClick={this.onSaveUrgencySetting}>
+              Save
+            </button>
+          </div>
+        </div>  
+      </form>
+    )
 
     const change_password_form = 
       (
@@ -198,11 +286,18 @@ class AccountScreen extends React.Component {
         </form>
       );
 
-    const alert =
+    const password_alert =
       (
         <Alert
-          message={this.state.alert_message}
-          onClose={this.onClose}/>
+          message={this.state.password_alert_message}
+          onClose={this.onPasswordClose}/>
+      );
+
+    const urgency_setting_alert =
+      (
+        <Alert
+          message={this.state.urgency_setting_alert_message}
+          onClose={this.onUrgencySettingClose}/>
       );
 
     return (
@@ -218,6 +313,7 @@ class AccountScreen extends React.Component {
               </div>
 
               <div className="navbar-nav ml-auto">
+                <a className="nav-item nav-link active">{this.props.user.email}</a>
                 <button type="button" className="btn custom-button" onClick={this.props.onLogout}>Logout</button>
               </div>
             </div>
@@ -233,26 +329,19 @@ class AccountScreen extends React.Component {
               </h1>
 
               <hr className="my-4" />
+              
+              {this.state.urgency_setting_alert_displayed ? urgency_setting_alert : null}
 
               <h5>Deadline Urgency Setting</h5>
               <small>Pick the duration of time before your deadlines become urgent.</small>
 
-              <DropdownButton
-                id="dropdown"
-                drop="right"
-                className="mt-2"
-                title="placeholder"
-                >
-                <Dropdown.Item >On the day</Dropdown.Item>
-                <Dropdown.Item >1 day before</Dropdown.Item>
-                <Dropdown.Item >2 days before</Dropdown.Item>
-              </DropdownButton>
+              {update_urgency_setting_form}
 
               <hr className="my-4" />
 
-              <h5>Change Password</h5>
+              {this.state.password_alert_displayed ? password_alert : null}
 
-              {this.state.alert_displayed ? alert : null}
+              <h5>Change Password</h5>
 
               {change_password_form}
 

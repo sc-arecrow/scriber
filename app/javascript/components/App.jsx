@@ -17,8 +17,7 @@ class App extends React.Component {
       user: {},
       tasks: [],
       tags: [],
-      displayed_tasks: [],
-      urgency_setting: null
+      displayed_tasks: []
     }
 
     this.onLogin = this.onLogin.bind(this);
@@ -85,8 +84,10 @@ class App extends React.Component {
     this.loginStatus();
   }
 
-  onChangeUrgencySetting = setting => {
-    this.setState({urgency_setting: setting})
+  onChangeUrgencySetting = data => {
+    this.setState({
+      user: data.user
+    })
   }
 
   onChangeTasks = tasks => {
@@ -221,13 +222,11 @@ class App extends React.Component {
           onUpdateTasks={this.onUpdateTasks}
           onDeleteBelow={this.onDeleteBelow}
           displayTasksOf={this.displayTasksOf}
-          onFilterTag={this.onFilterTag}
-          urgency_setting={this.state.urgency_setting}/>
+          onFilterTag={this.onFilterTag}/>
         <AccountScreen 
           path='/account'
           user={this.state.user}
           onLogout={this.onLogout}
-          urgency_setting={this.urgency_setting}
           onChangeUrgencySetting={this.onChangeUrgencySetting}/>
       </Router>
     )
